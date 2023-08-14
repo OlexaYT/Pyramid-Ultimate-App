@@ -33,7 +33,7 @@ class ImageGalleryApp:
 
     def create_widgets(self):
 
-        self.background_image = Image.open("bg.png")  # Replace with your background image path
+        self.background_image = Image.open("Resources/bg.png")  # Replace with your background image path
         self.background_photo = ImageTk.PhotoImage(self.background_image)
 
         # Create a Label to display the background image
@@ -224,7 +224,7 @@ class ImageGalleryApp:
 
     def display_selected_image(self, image_name, x, y):
         
-        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources'
         image_folder = os.path.join(__location__, image_name)
         p_images = [f for f in os.listdir(image_folder) if f.startswith('p') and f.endswith(('.png', '.jpg', '.jpeg'))]
         s_images = [f for f in os.listdir(image_folder) if f.startswith('s') and f.endswith(('.png', '.jpg', '.jpeg'))]
@@ -253,7 +253,7 @@ class ImageGalleryApp:
         self.root.destroy()
 
 if __name__ == "__main__":
-    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "\\Resources"
     image_folder_path = os.path.join(__location__, 'Card Backs App')  # Replace with the actual folder path containing your images
 
     root = tk.Tk()
