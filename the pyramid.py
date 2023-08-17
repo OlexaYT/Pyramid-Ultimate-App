@@ -260,12 +260,14 @@ class ImageGalleryApp:
             #p_btn.configure(image=self.roll_button_image(rolled_game_in, 'p'))
             s_btn = self.generate_blank_button(30, 30, 's')
             #p_btn = self.roll_button_image(rolled_game_in, 'p', p_btn)
+
+            # [Petra]: Write wrapper class for button to clean this mess
             self.images.clear()
-            self.images.append(self.roll_button_image(rolled_game_in, 'p'))
-            p_btn.config(image=self.images[-1])
+            self.roll_button_image(rolled_game_in, 'p', p_btn)
+            p_btn.config(command= lambda r=rolled_game_in, prefix='p': self.roll_button_image(r, prefix, p_btn))
             self.primary_objective_buttons.append(p_btn)
-            self.images.append(self.roll_button_image(rolled_game_in, 's'))
-            s_btn.config(image=self.images[-1])
+            self.roll_button_image(rolled_game_in, 's', s_btn)
+            s_btn.config(command= lambda r=rolled_game_in, prefix='s': self.roll_button_image(r, prefix, s_btn))
             self.primary_objective_buttons.append(s_btn)
             #s_btn.configure(image=self.roll_button_image(rolled_game_in, 's'))
             #self.roll_button_image(s_btn, rolled_game_in, 's')
@@ -280,7 +282,7 @@ class ImageGalleryApp:
             _btn.place(x=x + self.button_width + 10, y=y)
         return _btn
     
-    def roll_button_image(self, rolled_game, prefix):
+    def roll_button_image(self, rolled_game, prefix, button):
         def random_image_path_from_folder(image_folder, prefix):
             images = [f for f in os.listdir(image_folder) if f.startswith(prefix) and f.endswith(('.png', '.jpg', '.jpeg'))]
             output = os.path.join(image_folder, random.choice(images))
@@ -296,7 +298,8 @@ class ImageGalleryApp:
         _photo = ImageTk.PhotoImage(_image)
         #button.configure(image=_photo)
         #return button
-        return _photo
+        self.images.append(_photo)
+        button.config(image=self.images[-1])
                            
     def close_program(self, event):
         self.root.destroy()
