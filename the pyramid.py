@@ -123,10 +123,21 @@ class ImageGalleryApp:
         self.done_button_clicked = True
         self.canvas.destroy()
         self.clicked_frame.destroy()
-
         self.next_button.place_forget()
         self.prev_button.place_forget()
         self.done_button.place_forget()
+
+        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        hwnd = self.canvas.winfo_id()
+        colorkey = win32api.RGB(218, 238, 1)
+        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
+        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
+        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
+        self.canvas.place(x=0, y=0)
+
+        self.clicked_frame = tk.Frame(self.root)
+        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
 
         # Create a label asking how many games to play
         self.games_label = tk.Label(self.root, text="How many games would you like to play?", font=("Helvetica", 18))
@@ -167,19 +178,22 @@ class ImageGalleryApp:
         # Clear the previous screen
         # [Petra]: I'd expect human code to call clear_screen() here, but we can't use chatGPT's clear_screen() as is, as it comes bundled with "how many games" code.
         # [Petra]: I'm unclear how necessary destroying and re-initializing canvas is here. clear_screen() does not reinitialize and seems fine.
-        #self.canvas.destroy()
+        self.canvas.destroy()
         self.clicked_frame.destroy()
-
+        
         # Create a new canvas for displaying selected images
         # [Petra]: TODO Win32Cgui rendering, race condition
-        #self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
-        #hwnd = self.canvas.winfo_id()
-        #colorkey = win32api.RGB(218, 238, 1)
-        #wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-        #new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
-        #win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
-        #win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
-        #self.canvas.place(x=0, y=0)
+        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        hwnd = self.canvas.winfo_id()
+        colorkey = win32api.RGB(218, 238, 1)
+        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
+        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
+        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
+        self.canvas.place(x=0, y=0)
+
+        self.clicked_frame = tk.Frame(self.root)
+        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
 
         self.start_games()
 
@@ -245,7 +259,14 @@ class ImageGalleryApp:
             p_btn = self.generate_blank_button(30, 30, 'p')
             #p_btn.configure(image=self.roll_button_image(rolled_game_in, 'p'))
             s_btn = self.generate_blank_button(30, 30, 's')
-            p_btn = self.roll_button_image(rolled_game_in, 'p', p_btn)
+            #p_btn = self.roll_button_image(rolled_game_in, 'p', p_btn)
+            self.images.clear()
+            self.images.append(self.roll_button_image(rolled_game_in, 'p'))
+            p_btn.config(image=self.images[-1])
+            self.primary_objective_buttons.append(p_btn)
+            self.images.append(self.roll_button_image(rolled_game_in, 's'))
+            s_btn.config(image=self.images[-1])
+            self.primary_objective_buttons.append(s_btn)
             #s_btn.configure(image=self.roll_button_image(rolled_game_in, 's'))
             #self.roll_button_image(s_btn, rolled_game_in, 's')
             #x_position += (image_width*2) + (spacing*2)
@@ -259,7 +280,7 @@ class ImageGalleryApp:
             _btn.place(x=x + self.button_width + 10, y=y)
         return _btn
     
-    def roll_button_image(self, rolled_game, prefix, button):
+    def roll_button_image(self, rolled_game, prefix):
         def random_image_path_from_folder(image_folder, prefix):
             images = [f for f in os.listdir(image_folder) if f.startswith(prefix) and f.endswith(('.png', '.jpg', '.jpeg'))]
             output = os.path.join(image_folder, random.choice(images))
@@ -273,8 +294,9 @@ class ImageGalleryApp:
         _image = Image.open(random_image_path_from_folder(image_folder, prefix))
         _image = _image.resize((self.button_width, self.button_height))
         _photo = ImageTk.PhotoImage(_image)
-        button.configure(image=_photo)
-        return button
+        #button.configure(image=_photo)
+        #return button
+        return _photo
                            
     def close_program(self, event):
         self.root.destroy()
