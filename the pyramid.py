@@ -11,16 +11,17 @@ class CardImageButton:
     button_width = 189
     button_height = 270
     button_x_spacing = 10
-    def __init__(self, canvas, x, y, prefix, rolled_game):
+    def __init__(self, canvas, x, y, prefix, rolled_game, scale=1.0):
         self.image = []
         self.rolled_game = rolled_game
-        self.button_widget = tk.Button(canvas, image=None,width=CardImageButton.button_width, height=CardImageButton.button_height)
+        self.button_widget = tk.Button(canvas, image=None,width=int(CardImageButton.button_width*scale), height=int(CardImageButton.button_height*scale))
         self.prefix = prefix
+        self.scale = scale
         # [Petra]: Not future-proofed in case of more than two prefixes... but I think it's fine.
         if prefix == 'p':
             self.button_widget.place(x=x, y=y)
         else: 
-            self.button_widget.place(x=x + CardImageButton.button_width + CardImageButton.button_x_spacing, y=y)
+            self.button_widget.place(x=x + int(CardImageButton.button_width*scale + CardImageButton.button_x_spacing*scale), y=y)
         self.roll_objective_from_game()
     
     def roll_objective_from_game(self):
@@ -28,7 +29,7 @@ class CardImageButton:
         image_folder = os.path.join(__location__, self.rolled_game)
 
         _image = Image.open(self.random_image_path_from_folder(image_folder, self.prefix))
-        _image = _image.resize((CardImageButton.button_width, CardImageButton.button_height))
+        _image = _image.resize((int(CardImageButton.button_width*self.scale), int(CardImageButton.button_height*self.scale)))
         _photo = ImageTk.PhotoImage(_image)
 
         self.image.clear()
@@ -57,6 +58,7 @@ class ImageGalleryApp:
         # fall out of scope and get scooped up by Python's somewhat zealous garbage collector.
         self.primary_objective_buttons = []
         self.secondary_objective_buttons = []
+        self.curse_objective_buttons = []
 
         self.load_images()
         self.create_widgets()
@@ -283,25 +285,46 @@ class ImageGalleryApp:
             if int(self.games_selection.get()) < 1:
                     print("Please select the number of games before starting.")
             
-            x_position = 328
-            y_position = 300
+            self.ui_position_math(selected_images)
+    
+    def ui_position_math(self, selected_images):
+        x_position = 328
+        y_position = 300
 
-            for rolled_game in selected_images:
-                rolled_game_in = rolled_game.split('.')[0]
+        for rolled_game in selected_images:
+            rolled_game_in = rolled_game.split('.')[0]
 
-                # [Petra]: repeated code, could probably make a function for this.
-                p_btn = CardImageButton(self.canvas, x_position, y_position, 'p', rolled_game_in)
-                p_btn.button_widget.config(command= p_btn.roll_objective_from_game)
-                self.primary_objective_buttons.append(p_btn)
+            self.GenerateCardImageButtons(rolled_game_in, x_position, y_position, 0.5)
 
-                s_btn = CardImageButton(self.canvas, x_position, y_position, 's', rolled_game_in)
-                s_btn.button_widget.config(command= s_btn.roll_objective_from_game)
-                self.secondary_objective_buttons.append(s_btn)
+            x_position += 478
+            if(x_position > 1284 and y_position < 620):
+                x_position = 567
+                y_position = 620
+    
+    def GenerateCardImageButtons(self, rolled_game_in, x_position, y_position, scale = 1.0):
+        curse = bool(random.randrange(20)==0)
+        match rolled_game_in:
+            case _:
+                p_btn = self.CardImageButtonFactory(x_position, y_position, 'p', rolled_game_in, scale)
+                s_btn = self.CardImageButtonFactory(x_position, y_position, 's', rolled_game_in, scale)
+                if (curse):
+                    #TODO: Dynamically reposition objectives based on curse roll.
+                    print("Curse rolled")
 
-                x_position += 478
-                if(x_position > 1284 and y_position < 620):
-                    x_position = 567
-                    y_position = 620
+                
+    def CardImageButtonFactory(self, x_position, y_position, prefix, rolled_game_in, scale = 1.0):
+        btn = CardImageButton(self.canvas, x_position, y_position, prefix, rolled_game_in, scale)
+        btn.button_widget.config(command= btn.roll_objective_from_game)
+        match prefix:
+            case 'p':
+                self.primary_objective_buttons.append(btn)
+            case 's':
+                self.secondary_objective_buttons.append(btn)
+            case 'c':
+                self.curse_objective_buttons.append(btn)
+            case _:
+                print("Error: Unhandled prefix passed to CardImageButtonFactory()")
+        return btn
                            
     def close_program(self, event):
         self.root.destroy()
