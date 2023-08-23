@@ -8,36 +8,55 @@ import win32api
 import random
 
 class GameDraft:
-    def __init__(self, canvas, rolled_game, x_position, y_position, scale=[1.0,1.0]) -> None:
+    def __init__(self, canvas, rolled_game, x_position, y_position) -> None:
         self.rolled_game=rolled_game
         self.canvas = canvas
         self.primaries=[]
         self.curse=[]
         self.secondaries=[]
-        self.scale=scale
-        self.GenerateCardImageButtons(rolled_game, x_position,y_position)
+        self.x_position = x_position
+        self.y_position = y_position
+        self.GenerateCardImageButtons(rolled_game)
     
-    def GenerateCardImageButtons(self, rolled_game, x_position, y_position):
+    def GenerateCardImageButtons(self, rolled_game):
         #NOTE: Insert duplicate reroll  code here, and/or additional objective draft.
         self.primaries.clear()
         self.curse.clear()
         self.secondaries.clear()
         
-        curse = bool(random.randrange(10)==0)
-        #curse = False
-        match rolled_game:
-            case _:
-                self.primaries.append(self.CardImageButtonFactory(x_position, y_position, 'p', rolled_game))
-                self.secondaries.append(self.CardImageButtonFactory(x_position, y_position, 's', rolled_game))
+        curse = bool(random.randrange(5)==0)
         if (curse):
-            self.curse.append(self.CardImageButtonFactory(x_position, y_position, 'c', rolled_game))
-            # [Petra]: Debug
+           self.CardImageButtonFactory('c')
+        match rolled_game:
+            case "monster train":
+                self.CardImageButtonFactory('p', [0.66,0.66])
+                self.CardImageButtonFactory('p', [0.66,0.66])
+                self.CardImageButtonFactory('s')
+            case "sporcle":
+                self.CardImageButtonFactory('p')
+                self.CardImageButtonFactory('s')
+                self.CardImageButtonFactory('s')
+            case "wordle":
+                self.CardImageButtonFactory('p')
+                self.CardImageButtonFactory('s')
+                self.CardImageButtonFactory('s')
+            case "question deck free":
+                for i in range(5):
+                    self.CardImageButtonFactory('p', [0.66, 0.66])
+            case "question deck paid":
+                for i in range(5):
+                    self.CardImageButtonFactory('p', [0.66, 0.66])
+            case _:
+                self.CardImageButtonFactory('p')
+                self.CardImageButtonFactory('s')
+        
+            # [Petra]: Debug, shows if curses are rolled
             #print("Curse rolled")
-        self.PlaceCardImageButtons(rolled_game, x_position, y_position)
+        self.PlaceCardImageButtons()
         return
 
-    def CardImageButtonFactory(self, x_position, y_position, prefix, rolled_game):
-        btn = CardImageButton(self.canvas, x_position, y_position, prefix, rolled_game, self.scale)
+    def CardImageButtonFactory(self, prefix, scale=[1.0,1.0]):
+        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, scale)
         btn.button_widget.config(command= btn.roll_objective_from_game)
         match prefix:
             case 'p':
@@ -50,17 +69,40 @@ class GameDraft:
                 print("Error: Unhandled prefix passed to CardImageButtonFactory()")
         return btn
     
-    def PlaceCardImageButtons(self, rolled_game, x_position, y_position):
+    def PlaceCardImageButtons(self):
         if len(self.curse) > 0:
             curse_space = 1.0
         else:
             curse_space = 0
         for p in range(len(self.primaries)):
-            self.primaries[p].button_widget.place(x=x_position, y=y_position+(200*p))
+            target = self.primaries[p]
+            position = self.ui_position_calc(p, self.x_position, self.y_position, 'p', target.scale, curse_space)
+            target.button_widget.place(x=position[0],y=position[1])
         for s in range(len(self.secondaries)):
-            self.secondaries[s].button_widget.place(x=x_position + int(CardImageButton.button_width*self.scale[0]*(1+curse_space) + CardImageButton.button_x_spacing*self.scale[0]*(1+curse_space)), y=y_position+(200*s))
+            target = self.secondaries[s]
+            position = self.ui_position_calc(s, self.x_position, self.y_position, 's', target.scale, curse_space)
+            target.button_widget.place(x=position[0],y=position[1])
         for c in range(len(self.curse)):
-            self.curse[c].button_widget.place(x=x_position + int(CardImageButton.button_width*self.scale[0] + CardImageButton.button_x_spacing*self.scale[0]), y=y_position+(200*c))
+            target = self.curse[c]
+            position = self.ui_position_calc(c, self.x_position, self.y_position, 'c', target.scale, curse_space)
+            target.button_widget.place(x=position[0],y=position[1])
+
+    def ui_position_calc(self, index, x_position, y_position, prefix, scale, curse_space):
+        out_x_position = x_position
+        out_y_position = y_position
+        match prefix:
+            case 'p':
+                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index)
+                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
+            case 's':
+                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * (1 + curse_space))
+                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
+            case 'c':
+                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0])
+                out_y_position = y_position + int(0.5 * CardImageButton.button_height * scale[1] * index)
+            case _:
+                print("Error: Unhandled prefix passed to GameDraft.ui_position_calc()")
+        return [out_x_position,out_y_position]
 
 class CardImageButton:
     button_width = 189
@@ -89,7 +131,10 @@ class CardImageButton:
 
     def random_image_path_from_folder(self,image_folder, prefix):
         images = [f for f in os.listdir(image_folder) if f.startswith(prefix) and f.endswith(('.png', '.jpg', '.jpeg'))]
+        if len(images) < 1:
+            print(str("Error loading images at: + " + str(self.prefix) + " " + str(self.rolled_game)))
         output = os.path.join(image_folder, random.choice(images))
+
         # [Petra]: Debugging; print loaded image filepath
         #print(str(output))
         return output
@@ -293,7 +338,7 @@ class ImageGalleryApp:
 
             for rolled_game in selected_images:
                 rolled_game_in = rolled_game.split('.')[0]
-                self.drafted_games.append(GameDraft(self.canvas,rolled_game_in,x_position,y_position,[1.0,1.0]))
+                self.drafted_games.append(GameDraft(self.canvas,rolled_game_in,x_position,y_position))
 
                 x_position += 650
                 if(x_position > 1900 and y_position < 470):
