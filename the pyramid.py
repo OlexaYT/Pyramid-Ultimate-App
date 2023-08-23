@@ -7,20 +7,113 @@ import win32con
 import win32api
 import random
 
+class GameDraft:
+    def __init__(self, canvas, rolled_game, x_position, y_position) -> None:
+        self.rolled_game=rolled_game
+        self.canvas = canvas
+        self.primaries=[]
+        self.curse=[]
+        self.secondaries=[]
+        self.x_position = x_position
+        self.y_position = y_position
+        self.GenerateCardImageButtons(rolled_game)
+    
+    def GenerateCardImageButtons(self, rolled_game):
+        #NOTE: Insert duplicate reroll  code here, and/or additional objective draft.
+        self.primaries.clear()
+        self.curse.clear()
+        self.secondaries.clear()
+        
+        curse = bool(random.randrange(5)==0)
+        if (curse):
+           self.CardImageButtonFactory('c')
+        match rolled_game:
+            case "monster train":
+                self.CardImageButtonFactory('p', [0.66,0.66])
+                self.CardImageButtonFactory('p', [0.66,0.66])
+                self.CardImageButtonFactory('s')
+            case "sporcle":
+                self.CardImageButtonFactory('p')
+                self.CardImageButtonFactory('s')
+                self.CardImageButtonFactory('s')
+            case "wordle":
+                self.CardImageButtonFactory('p')
+                self.CardImageButtonFactory('s')
+                self.CardImageButtonFactory('s')
+            case "question deck free":
+                for i in range(5):
+                    self.CardImageButtonFactory('p', [0.66, 0.66])
+            case "question deck paid":
+                for i in range(5):
+                    self.CardImageButtonFactory('p', [0.66, 0.66])
+            case _:
+                self.CardImageButtonFactory('p')
+                self.CardImageButtonFactory('s')
+        
+            # [Petra]: Debug, shows if curses are rolled
+            #print("Curse rolled")
+        self.PlaceCardImageButtons()
+        return
+
+    def CardImageButtonFactory(self, prefix, scale=[1.0,1.0]):
+        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, scale)
+        btn.button_widget.config(command= btn.roll_objective_from_game)
+        match prefix:
+            case 'p':
+                self.primaries.append(btn)
+            case 's':
+                self.secondaries.append(btn)
+            case 'c':
+                self.curse.append(btn)
+            case _:
+                print("Error: Unhandled prefix passed to CardImageButtonFactory()")
+        return btn
+    
+    def PlaceCardImageButtons(self):
+        if len(self.curse) > 0:
+            curse_space = 1.0
+        else:
+            curse_space = 0
+        for p in range(len(self.primaries)):
+            target = self.primaries[p]
+            position = self.ui_position_calc(p, self.x_position, self.y_position, 'p', target.scale, curse_space)
+            target.button_widget.place(x=position[0],y=position[1])
+        for s in range(len(self.secondaries)):
+            target = self.secondaries[s]
+            position = self.ui_position_calc(s, self.x_position, self.y_position, 's', target.scale, curse_space)
+            target.button_widget.place(x=position[0],y=position[1])
+        for c in range(len(self.curse)):
+            target = self.curse[c]
+            position = self.ui_position_calc(c, self.x_position, self.y_position, 'c', target.scale, curse_space)
+            target.button_widget.place(x=position[0],y=position[1])
+
+    def ui_position_calc(self, index, x_position, y_position, prefix, scale, curse_space):
+        out_x_position = x_position
+        out_y_position = y_position
+        match prefix:
+            case 'p':
+                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index)
+                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
+            case 's':
+                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * (1 + curse_space))
+                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
+            case 'c':
+                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0])
+                out_y_position = y_position + int(0.5 * CardImageButton.button_height * scale[1] * index)
+            case _:
+                print("Error: Unhandled prefix passed to GameDraft.ui_position_calc()")
+        return [out_x_position,out_y_position]
+
 class CardImageButton:
     button_width = 189
     button_height = 270
     button_x_spacing = 10
-    def __init__(self, canvas, x, y, prefix, rolled_game):
+    def __init__(self, canvas, x, y, prefix, rolled_game, scale=[1.0,1.0]):
+        self.scale=scale
         self.image = []
         self.rolled_game = rolled_game
-        self.button_widget = tk.Button(canvas, image=None,width=CardImageButton.button_width, height=CardImageButton.button_height)
+        self.button_widget = tk.Button(canvas, image=None,width=int(CardImageButton.button_width*self.scale[0]), height=int(CardImageButton.button_height*self.scale[1]))
         self.prefix = prefix
-        # [Petra]: Not future-proofed in case of more than two prefixes... but I think it's fine.
-        if prefix == 'p':
-            self.button_widget.place(x=x, y=y)
-        else: 
-            self.button_widget.place(x=x + CardImageButton.button_width + CardImageButton.button_x_spacing, y=y)
         self.roll_objective_from_game()
     
     def roll_objective_from_game(self):
@@ -28,17 +121,20 @@ class CardImageButton:
         image_folder = os.path.join(__location__, self.rolled_game)
 
         _image = Image.open(self.random_image_path_from_folder(image_folder, self.prefix))
-        _image = _image.resize((CardImageButton.button_width, CardImageButton.button_height))
+        _image = _image.resize((int(CardImageButton.button_width*self.scale[0]), int(CardImageButton.button_height*self.scale[1])))
         _photo = ImageTk.PhotoImage(_image)
 
         self.image.clear()
         self.image.append(_photo)
-        # [Petra]: Having CardImageButton.image be an array that we reference the tail of is likely unneeded. But this code worked for me.
+        # [Petra]: Having CardImageButton.image be an array that we reference the tail of is likely unneeded. But this code worked for me. ¯\_(ツ)_/¯
         self.button_widget.config(image=self.image[-1])
 
     def random_image_path_from_folder(self,image_folder, prefix):
         images = [f for f in os.listdir(image_folder) if f.startswith(prefix) and f.endswith(('.png', '.jpg', '.jpeg'))]
+        if len(images) < 1:
+            print(str("Error loading images at: + " + str(self.prefix) + " " + str(self.rolled_game)))
         output = os.path.join(image_folder, random.choice(images))
+
         # [Petra]: Debugging; print loaded image filepath
         #print(str(output))
         return output
@@ -53,10 +149,7 @@ class ImageGalleryApp:
         self.clicked_images = {}
         self.done_button_clicked = False
 
-        # [Petra]: I am not certain, but I think we need to store our buttons here after making them, so they don't [...]
-        # fall out of scope and get scooped up by Python's somewhat zealous garbage collector.
-        self.primary_objective_buttons = []
-        self.secondary_objective_buttons = []
+        self.drafted_games = []
 
         self.load_images()
         self.create_widgets()
@@ -103,7 +196,7 @@ class ImageGalleryApp:
         self.prev_button = ttk.Button(self.root, text="Previous", command=self.prev_page, style="Large.TButton")
         self.prev_button.place(x=220, y=1000)
 
-        self.done_button = ttk.Button(self.root, text="I'm Done Drafting my Deck!", command=self.clear_screen, style="Large.TButton")
+        self.done_button = ttk.Button(self.root, text="I'm Done Drafting my Deck!", command=self.choose_number_of_drafts, style="Large.TButton")
         self.done_button.place(x=950, y=1000, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
@@ -150,27 +243,8 @@ class ImageGalleryApp:
         clicked_label.image = clicked_photo
         clicked_label.pack(side=tk.LEFT)
 
-    # [Petra]: GPT's clear screen clears screen, but immediately proceeds into non-screen-clearing as it sets up the "How Many Games" page. 
-    # [Petra]: Likely this should be split into two functions. I'll leave it for now while I'm still getting my bearings.
-    def clear_screen(self):
-        self.done_button_clicked = True
-        self.canvas.destroy()
-        self.clicked_frame.destroy()
-        self.next_button.place_forget()
-        self.prev_button.place_forget()
-        self.done_button.place_forget()
-
-        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
-        hwnd = self.canvas.winfo_id()
-        colorkey = win32api.RGB(218, 238, 1)
-        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
-        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
-        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
-        self.canvas.place(x=0, y=0)
-
-        self.clicked_frame = tk.Frame(self.root)
-        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
+    def choose_number_of_drafts(self):
+        self.clear_screen()
 
         # Create a label asking how many games to play
         self.games_label = tk.Label(self.root, text="How many games would you like to play?", font=("Helvetica", 18))
@@ -192,7 +266,7 @@ class ImageGalleryApp:
         self.games_5_button.place(x=1120, y=600, anchor=tk.CENTER)
 
         # Create an entry box for custom number of games
-        self.custom_games_entry = tk.Entry(self.root, textvariable=self.games_selection, font=("Helvetica", 24))
+        self.custom_games_entry = tk.Entry(self.root, textvariable=self.games_selection, font=("Helvetica", 24), justify="center")
         self.custom_games_entry.place(x=960, y=700, anchor=tk.CENTER)
 
         # Create a "Start" button to proceed
@@ -227,81 +301,53 @@ class ImageGalleryApp:
 
         self.start_games()
 
+    def clear_screen(self):
+        self.done_button_clicked = True
+        self.canvas.destroy()
+        self.clicked_frame.destroy()
+        self.next_button.place_forget()
+        self.prev_button.place_forget()
+        self.done_button.place_forget()
 
+        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        hwnd = self.canvas.winfo_id()
+        colorkey = win32api.RGB(218, 238, 1)
+        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
+        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
+        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
+        self.canvas.place(x=0, y=0)
+
+        self.clicked_frame = tk.Frame(self.root)
+        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
+        
     def start_games(self):
-        self.primary_objective_buttons.clear()
-        self.secondary_objective_buttons.clear()
+        self.drafted_games.clear()
+        self.clear_screen()
         if self.games_selection:
             weighted_images = []
             for rolled_game, weight in self.clicked_images.items():
                 weighted_images.extend([rolled_game] * weight)
+            
+            x_position = 50
+            y_position = 100
 
             selected_images = random.sample(weighted_images, int(self.games_selection.get()))
             self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.start_games)
             self.reroll_button.place(x=940, y=10)  # Adjust the coordinates as needed
 
-            #image_width = CardImageButton.button_width
-            #image_height = CardImageButton.button_height
-            #spacing = 10  # Adjust the spacing between images
-
-            #if int(self.games_selection.get()) == 5:
-            #         top_row_x_positions,bottom_row_x_positions = [],[]
-
-            #         pair_spacing = 100  # Adjust the spacing between pairs
-            #         pair_spacing_between_rows = 50  # Adjust the spacing between the top and bottom rows
-
-            #         # Calculate x positions for top row
-            #         x_start_top = (1920 - (6 * (2 * image_width + pair_spacing) - (pair_spacing*2))) // 2 + image_width
-
-            #         top_row_x_positions = []
-            #         for i in range(3):
-            #             x_position = x_start_top + (2 * image_width + pair_spacing) * (i + 1)
-            #             top_row_x_positions.append(x_position)
-
-            #         # Calculate x positions for bottom row
-            #         x_start_bottom = (1920 - (4 * (2 * image_width + pair_spacing) - (pair_spacing*2))) // 2 + image_width
-
-            #         bottom_row_x_positions = []
-            #         for i in range(2):
-            #             x_position = x_start_bottom + (2 * image_width + pair_spacing) * (i+.5)
-            #             bottom_row_x_positions.append(x_position)
-
-            #         y_top = 300  # Y position for the top row
-            #         y_bottom = y_top + image_height + pair_spacing_between_rows  # Y position for the bottom row
-
-                    
-            #         if i < 3:  # Display images on the top row
-            #             x_position = top_row_x_positions[i]
-            #             y_position = y_top
-            #         else:  # Display images on the bottom row
-            #             x_position = bottom_row_x_positions[i - 3]
-            #             y_position = y_bottom
-            #else:
-                #x_position = (1920 - (image_width * (len(selected_images)*2) + spacing * (len(selected_images) - 1))) // 2
-                #y_position = 300  # Adjust the y-position as needed
-
-            if int(self.games_selection.get()) < 1:
-                    print("Please select the number of games before starting.")
-            
-            x_position = 328
-            y_position = 300
-
             for rolled_game in selected_images:
                 rolled_game_in = rolled_game.split('.')[0]
+                self.drafted_games.append(GameDraft(self.canvas,rolled_game_in,x_position,y_position))
 
-                # [Petra]: repeated code, could probably make a function for this.
-                p_btn = CardImageButton(self.canvas, x_position, y_position, 'p', rolled_game_in)
-                p_btn.button_widget.config(command= p_btn.roll_objective_from_game)
-                self.primary_objective_buttons.append(p_btn)
+                x_position += 650
+                if(x_position > 1900 and y_position < 470):
+                    x_position = 317
+                    y_position = 470
+           
 
-                s_btn = CardImageButton(self.canvas, x_position, y_position, 's', rolled_game_in)
-                s_btn.button_widget.config(command= s_btn.roll_objective_from_game)
-                self.secondary_objective_buttons.append(s_btn)
-
-                x_position += 478
-                if(x_position > 1284 and y_position < 620):
-                    x_position = 567
-                    y_position = 620
+        if int(self.games_selection.get()) < 1:
+            print("Please select the number of games before starting.")              
                            
     def close_program(self, event):
         self.root.destroy()
