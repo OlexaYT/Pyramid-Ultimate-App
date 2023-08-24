@@ -6,6 +6,7 @@ import win32gui
 import win32con
 import win32api
 import random
+import csv
 
 class GameDraft:
     def __init__(self, canvas, rolled_game, x_position, y_position) -> None:
@@ -164,7 +165,6 @@ class ImageGalleryApp:
             self.images.append((image, filename))  # Store both image and filename
 
     def create_widgets(self):
-
         self.background_image = Image.open("Resources/bg.png")  # Replace with your background image path
         self.background_photo = ImageTk.PhotoImage(self.background_image)
 
@@ -172,7 +172,6 @@ class ImageGalleryApp:
         bg_label = tk.Label(self.root, image=self.background_photo)
         bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        
         self.canvas = tk.Canvas(root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218,238,1) 
@@ -244,7 +243,7 @@ class ImageGalleryApp:
         clicked_label.pack(side=tk.LEFT)
 
     def choose_number_of_drafts(self):
-        self.clear_screen()
+        self.clear_screen(0)
 
         # Create a label asking how many games to play
         self.games_label = tk.Label(self.root, text="How many games would you like to play?", font=("Helvetica", 18))
@@ -270,44 +269,40 @@ class ImageGalleryApp:
         self.custom_games_entry.place(x=960, y=700, anchor=tk.CENTER)
 
         # Create a "Start" button to proceed
-        self.start_button = ttk.Button(self.root, text="Start", command=self.prep_canvas_for_run, style="Large.TButton")
+        self.start_button = ttk.Button(self.root, text="Start", command=self.start_games, style="Large.TButton")
         self.start_button.place(x=960, y=800, anchor=tk.CENTER)
+    
+    def return_button(self):
+        self.clear_screen(2)
+        self.create_widgets()
 
-    def prep_canvas_for_run(self):
-        self.games_1_button.place_forget()
-        self.games_3_button.place_forget()
-        self.games_5_button.place_forget()
-        self.custom_games_entry.place_forget()
-        self.start_button.place_forget()
-        self.games_label.place_forget()
-
-        # Clear the previous screen
+    def clear_screen(self, prev_screen_index=0):
         self.canvas.destroy()
         self.clicked_frame.destroy()
-        
-        # Create a new canvas for displaying selected images
-        # [Petra]: Consider defining a single canvas in init which would be reused between functions.
-        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
-        hwnd = self.canvas.winfo_id()
-        colorkey = win32api.RGB(218, 238, 1)
-        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
-        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
-        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
-        self.canvas.place(x=0, y=0)
-
-        self.clicked_frame = tk.Frame(self.root)
-        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
-
-        self.start_games()
-
-    def clear_screen(self):
-        self.done_button_clicked = True
-        self.canvas.destroy()
-        self.clicked_frame.destroy()
-        self.next_button.place_forget()
-        self.prev_button.place_forget()
-        self.done_button.place_forget()
+        match prev_screen_index:
+            case 0:
+                self.next_button.place_forget()
+                self.prev_button.place_forget()
+                self.done_button.place_forget()
+            case 1:
+                self.games_1_button.place_forget()
+                self.games_3_button.place_forget()
+                self.games_5_button.place_forget()
+                self.custom_games_entry.place_forget()
+                self.start_button.place_forget()
+                self.games_label.place_forget()
+            case 2:
+                self.reroll_button.place_forget()
+                self.back_button.place_forget()
+                # for game in self.drafted_games:
+                #     for primary in game.primaries:
+                #         primary.button_widget.place_forget()
+                #     for secondary in game.secondaries:
+                #         secondary.button_widget.place_forget()
+                #     for curse in game.curse:
+                #         curse.button_widget.place_forget()
+                self.drafted_games.clear()
+                self.clicked_images.clear()
 
         self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
@@ -322,19 +317,22 @@ class ImageGalleryApp:
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
         
     def start_games(self):
-        self.drafted_games.clear()
-        self.clear_screen()
+        self.clear_screen(1)
         if self.games_selection:
             weighted_images = []
             for rolled_game, weight in self.clicked_images.items():
                 weighted_images.extend([rolled_game] * weight)
-            
-            x_position = 50
-            y_position = 100
 
             selected_images = random.sample(weighted_images, int(self.games_selection.get()))
+
             self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.start_games)
             self.reroll_button.place(x=940, y=10)  # Adjust the coordinates as needed
+
+            self.back_button = tk.Button(self.root, text="<---", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.return_button)
+            self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+
+            x_position = 50
+            y_position = 100
 
             for rolled_game in selected_images:
                 rolled_game_in = rolled_game.split('.')[0]
