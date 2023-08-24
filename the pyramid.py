@@ -148,10 +148,13 @@ class ImageGalleryApp:
         self.current_page = 0
         self.images_per_page = 24
         self.clicked_images = {}
-        self.done_button_clicked = False
+        
+        self.adjectives = []
+        self.nouns = []
 
         self.drafted_games = []
 
+        self.read_csv()
         self.load_images()
         self.create_widgets()
 
@@ -265,7 +268,7 @@ class ImageGalleryApp:
         self.games_5_button.place(x=1120, y=600, anchor=tk.CENTER)
 
         # Create an entry box for custom number of games
-        self.custom_games_entry = tk.Entry(self.root, textvariable=self.games_selection, font=("Helvetica", 24), justify="center")
+        self.custom_games_entry = tk.Label(self.root, textvariable=self.games_selection, font=("Helvetica", 24), justify="center")
         self.custom_games_entry.place(x=960, y=700, anchor=tk.CENTER)
 
         # Create a "Start" button to proceed
@@ -280,29 +283,23 @@ class ImageGalleryApp:
         self.canvas.destroy()
         self.clicked_frame.destroy()
         match prev_screen_index:
-            case 0:
+            case 0: #Image Selection Screem
                 self.next_button.place_forget()
                 self.prev_button.place_forget()
                 self.done_button.place_forget()
-            case 1:
+            case 1: # Game Number Selection Screen
                 self.games_1_button.place_forget()
                 self.games_3_button.place_forget()
                 self.games_5_button.place_forget()
                 self.custom_games_entry.place_forget()
                 self.start_button.place_forget()
                 self.games_label.place_forget()
-            case 2:
+            case 2: # Draft Screen
                 self.reroll_button.place_forget()
                 self.back_button.place_forget()
-                # for game in self.drafted_games:
-                #     for primary in game.primaries:
-                #         primary.button_widget.place_forget()
-                #     for secondary in game.secondaries:
-                #         secondary.button_widget.place_forget()
-                #     for curse in game.curse:
-                #         curse.button_widget.place_forget()
                 self.drafted_games.clear()
                 self.clicked_images.clear()
+                self.title_label.place_forget()
 
         self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
@@ -315,7 +312,33 @@ class ImageGalleryApp:
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
-        
+    
+    def read_csv(self):
+        csv_file_path = 'word_bank.csv'
+        delimiter = ','  # Change to the appropriate delimiter if necessary
+        # Read the CSV file and split each line into values
+        with open(csv_file_path, newline='') as csv_file:
+            csv_reader = csv.DictReader(csv_file) #, delimiter=delimiter
+            for row in csv_reader:
+                self.adjectives.append(row['Adjectives'])
+                self.nouns.append(row['Nouns'])
+        # [Petra]: Debug print    
+        #for i in range(len(self.adjectives)):
+        #    print(""+str(self.adjectives[i])+" Pyramid of "+str(self.nouns[i]))
+    
+    def random_adjective(self):
+        return self.adjectives[random.randrange(len(self.adjectives))]
+    
+    def random_noun(self):
+        return self.nouns[random.randrange(len(self.nouns))]
+    
+    def reroll_all(self):
+        self.reroll_button.place_forget()
+        self.back_button.place_forget()
+        self.drafted_games.clear()
+        self.title_label.place_forget()
+        self.start_games()
+
     def start_games(self):
         self.clear_screen(1)
         if self.games_selection:
@@ -325,14 +348,18 @@ class ImageGalleryApp:
 
             selected_images = random.sample(weighted_images, int(self.games_selection.get()))
 
-            self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.start_games)
-            self.reroll_button.place(x=940, y=10)  # Adjust the coordinates as needed
+            # Create a Label to display the background image
+            self.title_label = tk.Label(self.root, text=""+str(self.random_adjective())+" Pyramid of "+str(self.random_noun()), font="Helvetica", bg="black", fg="white")
+            self.title_label.place(x=900, y=80, anchor=tk.CENTER)
+
+            self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.reroll_all)
+            self.reroll_button.place(x=900, y=1000)  # Adjust the coordinates as needed
 
             self.back_button = tk.Button(self.root, text="<---", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.return_button)
             self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
-            x_position = 50
-            y_position = 100
+            x_position = 100
+            y_position = 200
 
             for rolled_game in selected_images:
                 rolled_game_in = rolled_game.split('.')[0]
@@ -340,13 +367,12 @@ class ImageGalleryApp:
 
                 x_position += 650
                 if(x_position > 1900 and y_position < 470):
-                    x_position = 317
-                    y_position = 470
-           
+                    x_position = 400
+                    y_position += 370
 
         if int(self.games_selection.get()) < 1:
             print("Please select the number of games before starting.")              
-                           
+
     def close_program(self, event):
         self.root.destroy()
 
