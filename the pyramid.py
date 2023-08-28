@@ -171,6 +171,11 @@ class ImageGalleryApp:
         self.background_image = Image.open("Resources/bg.png")  # Replace with your background image path
         self.background_photo = ImageTk.PhotoImage(self.background_image)
 
+        self.next_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/next.png"))
+        self.previous_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/previous.png"))
+        self.donedrafting_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/done_drafting.png"))
+
+
         # Create a Label to display the background image
         bg_label = tk.Label(self.root, image=self.background_photo)
         bg_label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -192,14 +197,14 @@ class ImageGalleryApp:
         self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
         self.close_button.bind("<Button-1>", self.close_program)
 
-        self.next_button = ttk.Button(self.root, text="Next", command=self.next_page, style="Large.TButton")
-        self.next_button.place(x=1700, y=1000)
+        self.next_button = ttk.Button(self.root, image=self.next_image, command=self.next_page, style="Small.TButton")
+        self.next_button.place(x=1500, y=950)
 
-        self.prev_button = ttk.Button(self.root, text="Previous", command=self.prev_page, style="Large.TButton")
-        self.prev_button.place(x=220, y=1000)
+        self.prev_button = ttk.Button(self.root, image=self.previous_image, command=self.prev_page, style="Small.TButton")
+        self.prev_button.place(x=220, y=950)
 
-        self.done_button = ttk.Button(self.root, text="I'm Done Drafting my Deck!", command=self.choose_number_of_drafts, style="Large.TButton")
-        self.done_button.place(x=950, y=1000, anchor=tk.CENTER)
+        self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
+        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
@@ -248,9 +253,13 @@ class ImageGalleryApp:
     def choose_number_of_drafts(self):
         self.clear_screen(0)
 
+        self.one_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/one.png"))
+        self.three_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/three.png"))
+        self.five_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/five.png"))
+
         # Create a label asking how many games to play
-        self.games_label = tk.Label(self.root, text="How many games would you like to play?", font=("Helvetica", 18))
-        self.games_label.place(x=960, y=500, anchor=tk.CENTER)
+        self.title2 = self.canvas.create_text(962, 200, text="How many games would you like to play?", font=("Helvetica",50), fill = "gray")
+        self.title1 = self.canvas.create_text(960, 200, text="How many games would you like to play?", font=("Helvetica",50), fill = "white")
 
         # Create buttons for 1, 3, and 5 games
         self.games_selection = tk.StringVar()  # Variable to store the selected number of games
@@ -258,18 +267,14 @@ class ImageGalleryApp:
         def set_games_selection(value):
             self.games_selection.set(value)
 
-        self.games_1_button = tk.Button(self.root, text="1", font=("Helvetica", 24), command=lambda: set_games_selection("1"))
-        self.games_1_button.place(x=800, y=600, anchor=tk.CENTER)
+        self.games_1_button = tk.Button(self.root, image=self.one_image, font=("Helvetica", 24), command=lambda: set_games_selection("1"))
+        self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
 
-        self.games_3_button = tk.Button(self.root, text="3", font=("Helvetica", 24), command=lambda: set_games_selection("3"))
+        self.games_3_button = tk.Button(self.root, image=self.three_image, font=("Helvetica", 24), command=lambda: set_games_selection("3"))
         self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
 
-        self.games_5_button = tk.Button(self.root, text="5", font=("Helvetica", 24), command=lambda: set_games_selection("5"))
-        self.games_5_button.place(x=1120, y=600, anchor=tk.CENTER)
-
-        # Create an entry box for custom number of games
-        self.custom_games_entry = tk.Label(self.root, textvariable=self.games_selection, font=("Helvetica", 24), justify="center")
-        self.custom_games_entry.place(x=960, y=700, anchor=tk.CENTER)
+        self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Helvetica", 24), command=lambda: set_games_selection("5"))
+        self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
 
         # Create a "Start" button to proceed
         self.start_button = ttk.Button(self.root, text="Start", command=self.start_games, style="Large.TButton")
@@ -291,7 +296,6 @@ class ImageGalleryApp:
                 self.games_1_button.place_forget()
                 self.games_3_button.place_forget()
                 self.games_5_button.place_forget()
-                self.custom_games_entry.place_forget()
                 self.start_button.place_forget()
                 self.games_label.place_forget()
             case 2: # Draft Screen
