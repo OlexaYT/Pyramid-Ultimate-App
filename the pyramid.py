@@ -25,7 +25,7 @@ class GameDraft:
         self.curse.clear()
         self.secondaries.clear()
         
-        curse = bool(random.randrange(5)==0)
+        curse = bool(random.randrange(0,19)==0)
         if (curse):
            self.CardImageButtonFactory('c')
         match rolled_game:
@@ -299,7 +299,7 @@ class ImageGalleryApp:
                 self.back_button.place_forget()
                 self.drafted_games.clear()
                 self.clicked_images.clear()
-                self.title_label.place_forget()
+                #self.title_label.place_forget()
 
         self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
@@ -336,7 +336,9 @@ class ImageGalleryApp:
         self.reroll_button.place_forget()
         self.back_button.place_forget()
         self.drafted_games.clear()
-        self.title_label.place_forget()
+        self.canvas.delete(self.title1)
+        self.canvas.delete(self.title2)
+        #self.title_label.place_forget()
         self.start_games()
 
     def start_games(self):
@@ -349,8 +351,14 @@ class ImageGalleryApp:
             selected_images = random.sample(weighted_images, int(self.games_selection.get()))
 
             # Create a Label to display the background image
-            self.title_label = tk.Label(self.root, text=""+str(self.random_adjective())+" Pyramid of "+str(self.random_noun()), font="Helvetica", bg="black", fg="white")
-            self.title_label.place(x=900, y=80, anchor=tk.CENTER)
+            #self.title_label = tk.Label(self.root, text=""+str(self.random_adjective())+" Pyramid of "+str(self.random_noun()), font=("Helvetica",50), bg="black", fg="white")
+            #self.title_label.place(x=900, y=80, anchor=tk.CENTER)
+            
+            adjective = self.random_adjective()
+            noun = self.random_noun()
+            text = ""+str(adjective)+ " Pyramid of "+str(noun)
+            self.title2 = self.canvas.create_text(962, 82, text=text, font=("Helvetica",50), fill = "gray")
+            self.title1 = self.canvas.create_text(960, 80, text=text, font=("Helvetica",50), fill = "white")
 
             self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.reroll_all)
             self.reroll_button.place(x=900, y=1000)  # Adjust the coordinates as needed
