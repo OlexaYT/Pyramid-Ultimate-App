@@ -204,7 +204,7 @@ class ImageGalleryApp:
         self.prev_button.place(x=220, y=950)
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
-        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
+        self.done_button.place(x=950, y=1000, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
@@ -249,6 +249,8 @@ class ImageGalleryApp:
         clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
         clicked_label.image = clicked_photo
         clicked_label.pack(side=tk.LEFT)
+
+        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
 
     def choose_number_of_drafts(self):
         self.clear_screen(0)
