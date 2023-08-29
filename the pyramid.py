@@ -30,7 +30,7 @@ class GameDraft:
         #[Petra] Edited curse probability for debug purposes
         curse = bool(random.randrange(0,5)==0)
         if (curse):
-           self.cursed_x_scale = 0.66
+           self.cursed_x_scale = 0.85
            self.CardImageButtonFactory('c')
         match rolled_game:
             case "monster train":
@@ -349,11 +349,15 @@ class ImageGalleryApp:
     def reroll_all(self):
         self.reroll_button.place_forget()
         self.back_button.place_forget()
+        self.dice_button.place_forget()
         self.drafted_games.clear()
         self.canvas.delete(self.title1)
         self.canvas.delete(self.title2)
         #self.title_label.place_forget()
         self.start_games()
+    
+    def die_roll(self):
+        self.dice_button.config(text=str(random.randrange(1,7)))
 
     def start_games(self, num_games):
         self.clear_screen(1)
@@ -377,6 +381,10 @@ class ImageGalleryApp:
             self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.start_games(num_games))
             self.reroll_button.place(x=900, y=1000)  # Adjust the coordinates as needed
 
+            self.dice_button = tk.Button(self.root, text="Roll Die", font="Helvetica", bg="black", fg="white", cursor="hand2")
+            self.dice_button.config(command=lambda:self.die_roll())
+            self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as neede
+
             self.back_button = tk.Button(self.root, text="<---", font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.return_button)
             self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
@@ -387,7 +395,7 @@ class ImageGalleryApp:
             x_add = 650
             y_add = 370
 
-            #IMPORTANT: Edit this function's hardcoded valuse to adjust UI for different numbers of games chosen.
+            #IMPORTANT: Edit this function's hardcoded values to adjust UI for different numbers of games chosen.
             match num_games:
                 case 1:
                     x_position = 550
@@ -399,7 +407,10 @@ class ImageGalleryApp:
                     x_add = 515
                     game_draft_scale = [1.0,1.0]
                 case 5:
-                    print()
+                    x_position = 100
+                    y_position = 300
+                    x_add = 625
+                    y_add = 300
                 case _:
                     print("Error: Start games received an unexpected number of games")
 
@@ -409,8 +420,8 @@ class ImageGalleryApp:
 
                 x_position += x_add
                 if(x_position > 1900 and y_position < 470): #This code is hardcoded, but it should only ever affect 5 draft anyways.
-                    x_position = 400
-                    y_position = y_add
+                    x_position = 100 + (1.5 * CardImageButton.button_width) + 33
+                    y_position += y_add
 
         if num_games < 1:
             print("Please select the number of games before starting.")              
