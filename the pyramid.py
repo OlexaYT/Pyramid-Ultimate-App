@@ -18,7 +18,6 @@ class GameDraft:
         self.x_position = x_position
         self.y_position = y_position
         self.scale = scale
-        self.cursed_x_scale = 1.0
         self.GenerateCardImageButtons(rolled_game)
     
     def GenerateCardImageButtons(self, rolled_game):
@@ -30,7 +29,7 @@ class GameDraft:
         #[Petra] Edited curse probability for debug purposes
         curse = bool(random.randrange(0,5)==0)
         if (curse):
-           self.cursed_x_scale = 0.85
+           self.scale = [self.scale[0], self.scale[1]]
            self.CardImageButtonFactory('c')
         match rolled_game:
             case "monster train":
@@ -61,7 +60,7 @@ class GameDraft:
         return
 
     def CardImageButtonFactory(self, prefix, scale=[1.0,1.0]):
-        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, [scale[0]*self.scale[0]*self.cursed_x_scale, scale[1]*self.scale[1]])
+        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, self.scale)
         btn.button_widget.config(command= btn.roll_objective_from_game)
         match prefix:
             case 'p':
@@ -81,15 +80,15 @@ class GameDraft:
             curse_space = 0
         for p in range(len(self.primaries)): #For each primary-objective button
             target = self.primaries[p] #Grab target button from array
-            position = self.ui_position_calc(p, self.x_position, self.y_position, 'p', [target.scale[0]*self.cursed_x_scale, target.scale[1]], curse_space) #Pass to ui_position_calc to do the math.
+            position = self.ui_position_calc(p, self.x_position, self.y_position, 'p', target.scale, curse_space) #Pass to ui_position_calc to do the math.
             target.button_widget.place(x=position[0],y=position[1]) #set the position to the output of ui_position_calc
         for s in range(len(self.secondaries)):
             target = self.secondaries[s]
-            position = self.ui_position_calc(s, self.x_position, self.y_position, 's', [target.scale[0], target.scale[1]], curse_space)
+            position = self.ui_position_calc(s, self.x_position, self.y_position, 's', target.scale, curse_space)
             target.button_widget.place(x=position[0],y=position[1])
         for c in range(len(self.curse)):
             target = self.curse[c]
-            position = self.ui_position_calc(c, self.x_position, self.y_position, 'c', [target.scale[0], target.scale[1]], curse_space)
+            position = self.ui_position_calc(c, self.x_position, self.y_position, 'c', target.scale, curse_space)
             target.button_widget.place(x=position[0],y=position[1])
 
     def ui_position_calc(self, index, x_position, y_position, prefix, scale, curse_space):
@@ -100,11 +99,11 @@ class GameDraft:
                 out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) #For each primary, set the x_pos to inital pos + (.75 * card_width * x_scale * index)
                 out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index) #For each primary, set the y_pos to inital pos + (.25 * card_height * scale * index)
             case 's':
-                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * (1 + curse_space)) #Same as primary, but x_pos += (card width * scale) (or 2 times card width if curse)
+                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0]) #Same as primary, but x_pos += (card width * scale) (or 2 times card width if curse)
                 out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
             case 'c':
-                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0]) #Same as primary, but x_pos += (card width * scale)
-                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
+                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * 0.5) #Same as primary, but x_pos += (card width * scale)
+                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index + (CardImageButton.button_height * 0.5 * scale[1]))
             case _:
                 print("Error: Unhandled prefix passed to GameDraft.ui_position_calc()")
         return [out_x_position,out_y_position]
@@ -239,10 +238,13 @@ class ImageGalleryApp:
         for i in range(start_idx, end_idx):
             image, filename = self.images[i]
             photo = ImageTk.PhotoImage(image)
-            btn = tk.Button(self.canvas, image=photo, width=CardImageButton.button_width, height=CardImageButton.button_height,
-                            command=lambda f=filename: self.add_to_clicked_images(f))  # Pass filename to lambda
+            btn = tk.Button(self.canvas, image=photo, width=CardImageButton.button_width, height=CardImageButton.button_height)
+                            #,command=lambda f=filename: self.add_to_clicked_images(f))  # Pass filename to lambda
             btn.image = photo
             btn.grid(row=(i - start_idx) // 8, column=(i - start_idx) % 8, padx=22, pady=10)
+            btn.bind("<Button-1>", lambda event, f = filename: self.add_to_clicked_images(f)) #.bind inputs self, so we use lambda event to throw away that extra parameter
+            btn.bind("<Button-2>", lambda event, f = filename: self.remove_from_clicked_images(f))
+            btn.bind("<Button-3>", lambda event, f = filename: self.remove_from_clicked_images(f))
 
     def next_page(self):
         self.current_page = (self.current_page + 1) % ((len(self.images) + self.images_per_page - 1) // self.images_per_page)
@@ -258,16 +260,33 @@ class ImageGalleryApp:
         else:
             self.clicked_images[filename] = 1
 
-        clicked_image_path = os.path.join(self.image_folder, filename)
-        clicked_image = Image.open(clicked_image_path)
-        clicked_image = clicked_image.resize((CardImageButton.button_width // 4, CardImageButton.button_height // 4))
-        clicked_photo = ImageTk.PhotoImage(clicked_image)
-
-        clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
-        clicked_label.image = clicked_photo
-        clicked_label.pack(side=tk.LEFT)
-
         self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
+        self.generate_selected_deck_images()
+    
+    def remove_from_clicked_images(self, filename):
+        if filename in self.clicked_images:
+            self.clicked_images[filename] -= 1
+        else:
+            self.clicked_images[filename] = 0
+        
+        self.generate_selected_deck_images()
+
+    def generate_selected_deck_images(self):
+        for widget in self.clicked_frame.winfo_children():
+            widget.destroy()
+        for filename in self.clicked_images:
+            if self.clicked_images[filename] > 0:
+                i = 0
+                while i < self.clicked_images[filename]:
+                    clicked_image_path = os.path.join(self.image_folder, filename)
+                    clicked_image = Image.open(clicked_image_path)
+                    clicked_image = clicked_image.resize((CardImageButton.button_width // 4, CardImageButton.button_height // 4))
+                    clicked_photo = ImageTk.PhotoImage(clicked_image)
+
+                    clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
+                    clicked_label.image = clicked_photo
+                    clicked_label.pack(side=tk.LEFT)
+                    i += 1
 
     def choose_number_of_drafts(self):
         self.clear_screen(0)
@@ -277,8 +296,8 @@ class ImageGalleryApp:
         self.five_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/five.png"))
 
         # Create a label asking how many games to play
-        self.title2 = self.canvas.create_text(962, 200, text="How many games would you like to play?", font=("Helvetica",50), fill = "gray")
-        self.title1 = self.canvas.create_text(960, 200, text="How many games would you like to play?", font=("Helvetica",50), fill = "white")
+        self.title = tk.Label(self.canvas,text="How many games would you like to play?", font=("Helvetica",50))
+        self.title.place(x=962, y=200, anchor=tk.CENTER)
 
         # Create buttons for 1, 3, and 5 games
         self.games_selection = tk.StringVar()  # Variable to store the selected number of games
@@ -313,7 +332,8 @@ class ImageGalleryApp:
                 self.back_button.place_forget()
                 self.drafted_games.clear()
                 self.clicked_images.clear()
-                #self.title_label.place_forget()
+                self.title_label.destroy()
+                self.close_button.destroy()
 
         self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
@@ -346,15 +366,13 @@ class ImageGalleryApp:
     def random_noun(self):
         return self.nouns[random.randrange(len(self.nouns))]
     
-    def reroll_all(self):
+    def reroll_all(self, num_games):
         self.reroll_button.place_forget()
         self.back_button.place_forget()
         self.dice_button.place_forget()
-        self.drafted_games.clear()
-        self.canvas.delete(self.title1)
-        self.canvas.delete(self.title2)
-        #self.title_label.place_forget()
-        self.start_games()
+        self.title_label.destroy()
+        self.close_button.destroy()
+        self.start_games(num_games)
     
     def die_roll(self):
         self.dice_button.config(text=str(random.randrange(1,7)))
@@ -374,11 +392,16 @@ class ImageGalleryApp:
             
             adjective = self.random_adjective()
             noun = self.random_noun()
-            text = ""+str(adjective)+ " Pyramid of "+str(noun)
-            self.title2 = self.canvas.create_text(962, 82, text=text, font=("Helvetica",50), fill = "gray")
-            self.title1 = self.canvas.create_text(960, 80, text=text, font=("Helvetica",50), fill = "white")
+            text_r = ""+str(adjective)+ " Pyramid of "+str(noun)
+            self.title_label = tk.Label(self.root, text=text_r, font=("Helvetica",50), wraplength=1920, bg="white")
+            self.title_label.pack(side="top", expand=False, fill="x")
 
-            self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.start_games(num_games))
+            close_font = font.Font(family="Arial", size=16, weight="bold")  # Adjust font properties as needed
+            self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
+            self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
+            self.close_button.bind("<Button-1>", self.close_program)
+
+            self.reroll_button = tk.Button(self.root, text="REROLL", font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
             self.reroll_button.place(x=900, y=1000)  # Adjust the coordinates as needed
 
             self.dice_button = tk.Button(self.root, text="Roll Die", font="Helvetica", bg="black", fg="white", cursor="hand2")
@@ -399,7 +422,7 @@ class ImageGalleryApp:
             match num_games:
                 case 1:
                     x_position = 550
-                    y_position = 300
+                    y_position = 250
                     game_draft_scale = [2.0,2.0]
                 case 3:
                     x_position = 233
