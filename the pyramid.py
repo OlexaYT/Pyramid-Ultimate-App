@@ -1,6 +1,6 @@
 import os
 import tkinter as tk
-from tkinter import ttk, font
+from tkinter import ttk, font, Misc
 from PIL import Image, ImageTk
 import win32gui
 import win32con
@@ -60,7 +60,7 @@ class GameDraft:
         return
 
     def CardImageButtonFactory(self, prefix, scale=[1.0,1.0]):
-        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, self.scale)
+        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, [self.scale[0]*scale[0],self.scale[1]*scale[1]])
         btn.button_widget.config(command= btn.roll_objective_from_game)
         match prefix:
             case 'p':
@@ -96,13 +96,13 @@ class GameDraft:
         out_y_position = y_position
         match prefix:
             case 'p':
-                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) #For each primary, set the x_pos to inital pos + (.75 * card_width * x_scale * index)
+                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) #For each primary, set the x_pos to inital pos + (.75 * card_width * x_scale * index)
                 out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index) #For each primary, set the y_pos to inital pos + (.25 * card_height * scale * index)
             case 's':
-                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0]) #Same as primary, but x_pos += (card width * scale) (or 2 times card width if curse)
+                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0]) #Same as primary, but x_pos += (card width * scale) (or 2 times card width if curse)
                 out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
             case 'c':
-                out_x_position = x_position + int(0.75 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * 0.5) #Same as primary, but x_pos += (card width * scale)
+                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * 0.5) #Same as primary, but x_pos += (card width * scale)
                 out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index + (CardImageButton.button_height * 0.5 * scale[1]))
             case _:
                 print("Error: Unhandled prefix passed to GameDraft.ui_position_calc()")
@@ -113,12 +113,17 @@ class CardImageButton:
     button_height = 270
     button_x_spacing = 10
     def __init__(self, canvas, x, y, prefix, rolled_game, scale=[1.0,1.0]):
+        self.canvas=canvas
         self.scale=scale
         self.image = []
         self.rolled_game = rolled_game
         self.button_widget = tk.Button(canvas, image=None,width=int(CardImageButton.button_width*self.scale[0]), height=int(CardImageButton.button_height*self.scale[1]))
+        self.button_widget.bind("<Enter>",lambda event: self.raise_self())
         self.prefix = prefix
         self.roll_objective_from_game()
+    
+    def raise_self(self):
+        Misc.tkraise(self.button_widget)
     
     def roll_objective_from_game(self):
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources'
@@ -157,8 +162,10 @@ class ImageGalleryApp:
 
         self.drafted_games = []
         self.bg = []
+        self.bg_index = 0
         
         self.load_bgs()
+        self.background_photo = self.bg[0]
         self.read_csv()
         self.load_images()
         self.create_widgets()
@@ -172,7 +179,14 @@ class ImageGalleryApp:
             image = ImageTk.PhotoImage(image)
             self.bg.append(image)  # Store both image and filename
         if len(images) < 1:
-            print(str("Error loading bg images"))
+            print(str("Error loading bg images or no images in bgs folder"))
+    
+    def cycle_bg(self):
+        self.bg_index += 1
+        if self.bg_index >= len(self.bg):
+            self.bg_index = 0
+        self.bg_label.config(image=self.bg[self.bg_index])
+        
 
     def load_images(self):
         # Load images from the specified folder
@@ -184,17 +198,13 @@ class ImageGalleryApp:
             self.images.append((image, filename))  # Store both image and filename
 
     def create_widgets(self):
-        #self.background_photo = ImageTk.PhotoImage(random.choice(self.bg))
-        self.background_photo = random.choice(self.bg)
-
-
         self.next_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/next.png"))
         self.previous_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/previous.png"))
         self.donedrafting_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/done_drafting.png"))
 
         # Create a Label to display the background image
-        bg_label = tk.Label(self.root, image=self.background_photo)
-        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.bg_label = tk.Label(self.root, image=self.background_photo)
+        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.canvas = tk.Canvas(root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
@@ -221,6 +231,9 @@ class ImageGalleryApp:
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
         self.done_button.place(x=950, y=1000, anchor=tk.CENTER)
+        
+        self.cycle_bg_button = ttk.Button(self.root, text="Cycle Background", command=self.cycle_bg, style="Small.TButton")
+        self.cycle_bg_button.place(x=650, y=1020, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
@@ -267,8 +280,7 @@ class ImageGalleryApp:
         if filename in self.clicked_images:
             self.clicked_images[filename] -= 1
         else:
-            self.clicked_images[filename] = 0
-        
+            self.clicked_images[filename] = 0        
         self.generate_selected_deck_images()
 
     def generate_selected_deck_images(self):
@@ -381,8 +393,10 @@ class ImageGalleryApp:
         self.clear_screen(1)
         if self.games_selection:
             weighted_images = []
-            for rolled_game, weight in self.clicked_images.items():
-                weighted_images.extend([rolled_game] * weight)
+            while weighted_images.__len__() < num_games:
+                for rolled_game, weight in self.clicked_images.items():
+                    if weight > 0:
+                        weighted_images.extend([rolled_game] * weight)
 
             selected_images = random.sample(weighted_images, num_games)
 
