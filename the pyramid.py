@@ -13,7 +13,7 @@ class GameDraft:
         self.rolled_game=rolled_game
         self.canvas = canvas
         self.primaries=[]
-        self.curse=[]
+        self.curses=[]
         self.secondaries=[]
         self.x_position = x_position
         self.y_position = y_position
@@ -23,7 +23,7 @@ class GameDraft:
     def GenerateCardImageButtons(self, rolled_game):
         #NOTE: Insert duplicate reroll code here, and/or dynamic additional objective draft.
         self.primaries.clear()
-        self.curse.clear()
+        self.curses.clear()
         self.secondaries.clear()
 
         #[Petra] Edited curse probability for debug purposes
@@ -38,12 +38,12 @@ class GameDraft:
                 self.CardImageButtonFactory('s')
             case "sporcle":
                 self.CardImageButtonFactory('p')
-                self.CardImageButtonFactory('s')
-                self.CardImageButtonFactory('s')
+                self.CardImageButtonFactory('s', [0.66,0.66])
+                self.CardImageButtonFactory('s', [0.66,0.66])
             case "wordle":
                 self.CardImageButtonFactory('p')
-                self.CardImageButtonFactory('s')
-                self.CardImageButtonFactory('s')
+                self.CardImageButtonFactory('s', [0.66,0.66])
+                self.CardImageButtonFactory('s', [0.66,0.66])
             case "question deck free":
                 for i in range(5):
                     self.CardImageButtonFactory('p', [0.66, 0.66])
@@ -60,7 +60,7 @@ class GameDraft:
         return
 
     def CardImageButtonFactory(self, prefix, scale=[1.0,1.0]):
-        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, [self.scale[0]*scale[0],self.scale[1]*scale[1]])
+        btn = CardImageButton(self.canvas, self.x_position, self.y_position, prefix, self.rolled_game, [self.scale[0]*scale[0],self.scale[1]*scale[1]] )
         btn.button_widget.config(command= btn.roll_objective_from_game)
         match prefix:
             case 'p':
@@ -68,13 +68,13 @@ class GameDraft:
             case 's':
                 self.secondaries.append(btn)
             case 'c':
-                self.curse.append(btn)
+                self.curses.append(btn)
             case _:
                 print("Error: Unhandled prefix passed to CardImageButtonFactory()")
         return btn
     
     def PlaceCardImageButtons(self):
-        if len(self.curse) > 0:
+        if len(self.curses) > 0:
             curse_space = 1.0
         else:
             curse_space = 0
@@ -86,11 +86,12 @@ class GameDraft:
             target = self.secondaries[s]
             position = self.ui_position_calc(s, self.x_position, self.y_position, 's', target.scale, curse_space)
             target.button_widget.place(x=position[0],y=position[1])
-        for c in range(len(self.curse)):
-            target = self.curse[c]
+        for c in range(len(self.curses)):
+            target = self.curses[c]
             position = self.ui_position_calc(c, self.x_position, self.y_position, 'c', target.scale, curse_space)
             target.button_widget.place(x=position[0],y=position[1])
 
+    #TODO: Update comment
     def ui_position_calc(self, index, x_position, y_position, prefix, scale, curse_space):
         out_x_position = x_position 
         out_y_position = y_position
