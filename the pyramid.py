@@ -348,6 +348,9 @@ class ImageGalleryApp:
                 self.clicked_images.clear()
                 self.title_label.destroy()
                 self.close_button.destroy()
+                self.multiplayer_button.destroy()
+                self.coop_button.destroy()
+                self.multiplayer_rules.destroy()
 
         self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
@@ -381,16 +384,21 @@ class ImageGalleryApp:
         return self.nouns[random.randrange(len(self.nouns))]
     
     def reroll_all(self, num_games):
-        self.reroll_button.place_forget()
-        self.back_button.place_forget()
-        self.dice_button.place_forget()
+        self.reroll_button.destroy()
+        self.back_button.destroy()
+        self.drafted_games.clear()
+        self.clicked_images.clear()
         self.title_label.destroy()
         self.close_button.destroy()
+        self.multiplayer_button.destroy()
+        self.coop_button.destroy()
+        self.multiplayer_rules.destroy()
         self.start_games(num_games)
     
     def die_roll(self):
         self.dice_button.config(text=str(random.randrange(1,7)))
 
+    #Runs Drafted Objective Page
     def start_games(self, num_games):
         self.clear_screen(1)
         if self.games_selection:
@@ -402,10 +410,16 @@ class ImageGalleryApp:
 
             selected_images = random.sample(weighted_images, num_games)
 
-            # Create a Label to display the background image
-            #self.title_label = tk.Label(self.root, text=""+str(self.random_adjective())+" Pyramid of "+str(self.random_noun()), font=("Helvetica",50), bg="black", fg="white")
-            #self.title_label.place(x=900, y=80, anchor=tk.CENTER)
-            
+            #Set up images for canvas buttons
+            zoom = .80  # multiplier for image size by zooming -/+
+            self.rerollbutton_image = Image.open("Resources/Buttons/reroll_games.png")
+            self.rerollbutton_image = ImageTk.PhotoImage(self.rerollbutton_image.resize(tuple([int(zoom * x) for x in self.rerollbutton_image.size])))
+            self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
+            self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
+            self.rolldiebutton_image = Image.open("Resources/Buttons/roll_d6.png")
+            self.rolldiebutton_image = ImageTk.PhotoImage(self.rolldiebutton_image.resize(tuple([int(zoom * x) for x in self.rolldiebutton_image.size])))
+
+            #Place canvas buttons for the Drafted Objectives Page
             adjective = self.random_adjective()
             noun = self.random_noun()
             text_r = ""+str(adjective)+ " Pyramid of "+str(noun)
@@ -416,14 +430,6 @@ class ImageGalleryApp:
             self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
             self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
             self.close_button.bind("<Button-1>", self.close_program)
-
-            zoom = .80  # multiplier for image size by zooming -/+
-            self.rerollbutton_image = Image.open("Resources/Buttons/reroll_games.png")
-            self.rerollbutton_image = ImageTk.PhotoImage(self.rerollbutton_image.resize(tuple([int(zoom * x) for x in self.rerollbutton_image.size])))
-            self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
-            self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
-            self.rolldiebutton_image = Image.open("Resources/Buttons/roll_d6.png")
-            self.rolldiebutton_image = ImageTk.PhotoImage(self.rolldiebutton_image.resize(tuple([int(zoom * x) for x in self.rolldiebutton_image.size])))
             
             self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
             self.reroll_button.place(x=800, y=1000)  # Adjust the coordinates as needed
@@ -434,6 +440,17 @@ class ImageGalleryApp:
 
             self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.return_button)
             self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+
+            self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
+            self.multiplayerbutton_image = ImageTk.PhotoImage(self.multiplayerbutton_image.resize(tuple([int(zoom * x) for x in self.multiplayerbutton_image.size])))
+            self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
+            self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(zoom * x) for x in self.coopbutton_image.size])))
+
+            self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
+            self.multiplayer_button.place(x=1620, y=920)  # Adjust the coordinates as needed
+
+            self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
+            self.coop_button.place(x=1620, y=1000)  # Adjust the coordinates as needed         
 
             #IMPORTANT: These variables store the inital position and spacing between GameDrafts.
             x_position = 100
@@ -471,19 +488,7 @@ class ImageGalleryApp:
                     y_position += y_add
 
         if num_games < 1:
-            print("Please select the number of games before starting.")
-        
-        self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
-        self.multiplayerbutton_image = ImageTk.PhotoImage(self.multiplayerbutton_image.resize(tuple([int(zoom * x) for x in self.multiplayerbutton_image.size])))
-        self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
-        self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(zoom * x) for x in self.coopbutton_image.size])))
-        
-
-        self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
-        self.multiplayer_button.place(x=1620, y=920)  # Adjust the coordinates as needed
-
-        self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
-        self.coop_button.place(x=1620, y=1000)  # Adjust the coordinates as needed             
+            print("Please select the number of games before starting.")    
 
     def multiplayer_rules_button(self):
         
