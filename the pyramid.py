@@ -33,6 +33,10 @@ class GameDraft:
            self.scale = [self.scale[0], self.scale[1]]
            self.CardImageButtonFactory('c')
         match rolled_game:
+            case "astronarchs":
+                self.CardImageButtonFactory('p', [0.66,0.66])
+                self.CardImageButtonFactory('p', [0.66,0.66])
+                self.CardImageButtonFactory('s')
             case "monster train":
                 self.CardImageButtonFactory('p', [0.66,0.66])
                 self.CardImageButtonFactory('p', [0.66,0.66])
@@ -163,6 +167,8 @@ class ImageGalleryApp:
         self.nouns = []
 
         self.drafted_games = []
+
+        self.rules=[]
         self.bg = []
         self.bg_index = 0
         
@@ -170,6 +176,7 @@ class ImageGalleryApp:
         self.background_photo = self.bg[0]
         self.read_csv()
         self.load_images()
+        self.load_rules()
         self.create_widgets()
     
     def load_bgs(self):
@@ -188,7 +195,6 @@ class ImageGalleryApp:
         if self.bg_index >= len(self.bg):
             self.bg_index = 0
         self.bg_label.config(image=self.bg[self.bg_index])
-        
 
     def load_images(self):
         # Load images from the specified folder
@@ -198,6 +204,18 @@ class ImageGalleryApp:
             image = Image.open(image_path)
             image = image.resize((CardImageButton.button_width, CardImageButton.button_height))  # Resize the image
             self.images.append((image, filename))  # Store both image and filename
+    
+    def load_rules(self):
+        image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\rules'
+        images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        for filename in images:
+            image_path = os.path.join(image_folder, filename)
+            image = Image.open(image_path)
+            image = image.resize((int(CardImageButton.button_width*1.5), int(CardImageButton.button_height*1.5)))
+            image = ImageTk.PhotoImage(image)
+            self.rules.append(image)  # Store both image and filename
+        if len(images) < 1:
+            print(str("Error loading rule images or no images in rules folder"))
 
     def create_widgets(self):
         self.next_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/next.png"))
@@ -232,17 +250,19 @@ class ImageGalleryApp:
         self.prev_button.place(x=220, y=950)
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
-        self.done_button.place(x=950, y=1000, anchor=tk.CENTER)
+        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
         
         self.cycle_bg_button = ttk.Button(self.root, text="Cycle Background", command=self.cycle_bg, style="Small.TButton")
         self.cycle_bg_button.place(x=650, y=1020, anchor=tk.CENTER)
+
+        self.rules_button = ttk.Button(self.root, text="Show Rules", command=self.show_rules, style="Small.TButton")
+        self.rules_button.place(x=1300, y=1020, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
         
         self.show_page(0)
-
-    # [Petra]: Probably rename this function? 
+ 
     def show_page(self, page_number):
         start_idx = page_number * self.images_per_page
         end_idx = min((page_number + 1) * self.images_per_page, len(self.images))
@@ -253,8 +273,8 @@ class ImageGalleryApp:
         for i in range(start_idx, end_idx):
             image, filename = self.images[i]
             photo = ImageTk.PhotoImage(image)
-            btn = tk.Button(self.canvas, image=photo, width=CardImageButton.button_width, height=CardImageButton.button_height)
-                            #,command=lambda f=filename: self.add_to_clicked_images(f))  # Pass filename to lambda
+            btn = tk.Button(self.canvas, image = photo, width=CardImageButton.button_width, height=CardImageButton.button_height)
+            #btn.config(image=photo)
             btn.image = photo
             btn.grid(row=(i - start_idx) // 8, column=(i - start_idx) % 8, padx=22, pady=10)
             btn.bind("<Button-1>", lambda event, f = filename: self.add_to_clicked_images(f)) #.bind inputs self, so we use lambda event to throw away that extra parameter
@@ -274,9 +294,14 @@ class ImageGalleryApp:
             self.clicked_images[filename] += 1
         else:
             self.clicked_images[filename] = 1
+        clicked_image_path = os.path.join(self.image_folder, filename)
+        clicked_image = Image.open(clicked_image_path)
+        clicked_image = clicked_image.resize((CardImageButton.button_width // 4, CardImageButton.button_height // 4))
+        clicked_photo = ImageTk.PhotoImage(clicked_image)
 
-        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
-        self.generate_selected_deck_images()
+        clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
+        clicked_label.image = clicked_photo
+        clicked_label.pack(side=tk.LEFT)
     
     def remove_from_clicked_images(self, filename):
         if filename in self.clicked_images:
@@ -324,9 +349,34 @@ class ImageGalleryApp:
 
         self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Helvetica", 24), command=lambda: self.start_games(5))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
+
+        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
+        self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+
+    def show_rules(self):
+        self.clear_screen(0)
+        # Create a label asking how many games to play
+        self.title = tk.Label(self.canvas,text="Rules", font=("Helvetica",50))
+        self.title.place(x=962, y=200, anchor=tk.CENTER)
+
+        self.games_1_button = tk.Button(self.root, image=self.rules[0], command=lambda : self.return_button(1))
+        self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
+
+        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Helvetica", 24), command=lambda : self.return_button(1))
+        self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
+
+        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Helvetica", 24), command=lambda : self.return_button(1))
+        self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
+
+        zoom = 0.80
+        self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
+        self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
+
+        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
+        self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
     
-    def return_button(self):
-        self.clear_screen(2)
+    def return_button(self, cur_screen):
+        self.clear_screen(cur_screen)
         self.create_widgets()
 
     def clear_screen(self, prev_screen_index=0):
@@ -337,10 +387,13 @@ class ImageGalleryApp:
                 self.next_button.place_forget()
                 self.prev_button.place_forget()
                 self.done_button.place_forget()
+                self.rules_button.place_forget()
+                self.cycle_bg_button.place_forget()
             case 1: # Game Number Selection Screen5
                 self.games_1_button.place_forget()
                 self.games_3_button.place_forget()
                 self.games_5_button.place_forget()
+                self.back_button.place_forget()
             case 2: # Draft Screen
                 self.reroll_button.place_forget()
                 self.back_button.place_forget()
@@ -438,7 +491,7 @@ class ImageGalleryApp:
             self.dice_button.config(command=lambda:self.die_roll())
             self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as neede
 
-            self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.return_button)
+            self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
             self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
             self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
