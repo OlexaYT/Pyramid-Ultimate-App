@@ -113,6 +113,14 @@ class GameDraft:
             case _:
                 print("Error: Unhandled prefix passed to GameDraft.ui_position_calc()")
         return [out_x_position,out_y_position]
+    
+    def delete(self):
+        for p in self.primaries:
+            p.delete()
+        for s in self.secondaries:
+            s.delete()
+        for c in self.curses:
+            c.delete()
 
 class CardImageButton:
     button_width = 189
@@ -153,6 +161,9 @@ class CardImageButton:
         # [Petra]: Debugging; print loaded image filepath
         #print(str(output))
         return output
+    
+    def delete(self):
+        self.button_widget.destroy()
 
 class ImageGalleryApp:
     def __init__(self, root, image_folder):
@@ -171,7 +182,20 @@ class ImageGalleryApp:
         self.rules=[]
         self.bg = []
         self.bg_index = 0
-        
+
+        #Set up images for canvas buttons
+        zoom = .80  # multiplier for image size by zooming -/+
+        self.rerollbutton_image = Image.open("Resources/Buttons/reroll_games.png")
+        self.rerollbutton_image = ImageTk.PhotoImage(self.rerollbutton_image.resize(tuple([int(zoom * x) for x in self.rerollbutton_image.size])))
+        self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
+        self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
+        self.rolldiebutton_image = Image.open("Resources/Buttons/roll_d6.png")
+        self.rolldiebutton_image = ImageTk.PhotoImage(self.rolldiebutton_image.resize(tuple([int(zoom * x) for x in self.rolldiebutton_image.size])))
+        self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
+        self.multiplayerbutton_image = ImageTk.PhotoImage(self.multiplayerbutton_image.resize(tuple([int(zoom * x) for x in self.multiplayerbutton_image.size])))
+        self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
+        self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(zoom * x) for x in self.coopbutton_image.size])))
+
         self.load_bgs()
         self.background_photo = self.bg[0]
         self.read_csv()
@@ -236,13 +260,6 @@ class ImageGalleryApp:
 
         self.canvas.place(x=0, y=0)
 
-        #[Petra]: Gotta update our font drip before we publish this. Arial and Helvetica do not have the juice.
-        #[Petra]: They are neither fleek nor on-point.
-        close_font = font.Font(family="Arial", size=16, weight="bold")  # Adjust font properties as needed
-        self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
-        self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
-        self.close_button.bind("<Button-1>", self.close_program)
-
         self.next_button = ttk.Button(self.root, image=self.next_image, command=self.next_page, style="Small.TButton")
         self.next_button.place(x=1500, y=950)
 
@@ -260,9 +277,26 @@ class ImageGalleryApp:
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
+
+        self.top_layer_buttons()
         
         self.show_page(0)
- 
+    
+    def top_layer_buttons(self):
+        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
+        self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+
+        #[Petra]: Gotta update our font drip before we publish this. Arial and Helvetica do not have the juice.
+        #[Petra]: They are neither fleek nor on-point.
+        close_font = font.Font(family="Arial", size=16, weight="bold")  # Adjust font properties as needed
+        self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
+        self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
+        self.close_button.bind("<Button-1>", self.close_program)
+    
+    def destroy_top_layer(self):
+        self.back_button.destroy()
+        self.close_button.destroy()
+
     def show_page(self, page_number):
         start_idx = page_number * self.images_per_page
         end_idx = min((page_number + 1) * self.images_per_page, len(self.images))
@@ -350,8 +384,8 @@ class ImageGalleryApp:
         self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Helvetica", 24), command=lambda: self.start_games(5))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
 
-        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
-        self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
+        #self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
     def show_rules(self):
         self.clear_screen(0)
@@ -368,12 +402,8 @@ class ImageGalleryApp:
         self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Helvetica", 24), command=lambda : self.return_button(1))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
 
-        zoom = 0.80
-        self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
-        self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
-
-        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
-        self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
+        #self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
     
     def return_button(self, cur_screen):
         self.clear_screen(cur_screen)
@@ -382,6 +412,7 @@ class ImageGalleryApp:
     def clear_screen(self, prev_screen_index=0):
         self.canvas.destroy()
         self.clicked_frame.destroy()
+        self.destroy_top_layer()
         match prev_screen_index:
             case 0: #Image Selection Screem
                 self.next_button.place_forget()
@@ -389,22 +420,20 @@ class ImageGalleryApp:
                 self.done_button.place_forget()
                 self.rules_button.place_forget()
                 self.cycle_bg_button.place_forget()
-            case 1: # Game Number Selection Screen5
+            case 1: # Game Number Selection Screen
                 self.games_1_button.place_forget()
                 self.games_3_button.place_forget()
                 self.games_5_button.place_forget()
-                self.back_button.place_forget()
             case 2: # Draft Screen
                 self.reroll_button.place_forget()
-                self.back_button.place_forget()
                 self.drafted_games.clear()
                 self.clicked_images.clear()
                 self.title_label.destroy()
-                self.close_button.destroy()
                 self.multiplayer_button.destroy()
                 self.coop_button.destroy()
                 self.multiplayer_rules.destroy()
-
+                for d in self.drafted_games:
+                    d.delete()
         self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218, 238, 1)
@@ -416,6 +445,7 @@ class ImageGalleryApp:
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
+        self.top_layer_buttons()
     
     def read_csv(self):
         csv_file_path = 'word_bank.csv'
@@ -426,9 +456,6 @@ class ImageGalleryApp:
             for row in csv_reader:
                 self.adjectives.append(row['Adjectives'])
                 self.nouns.append(row['Nouns'])
-        # [Petra]: Debug print    
-        #for i in range(len(self.adjectives)):
-        #    print(""+str(self.adjectives[i])+" Pyramid of "+str(self.nouns[i]))
     
     def random_adjective(self):
         return self.adjectives[random.randrange(len(self.adjectives))]
@@ -438,22 +465,24 @@ class ImageGalleryApp:
     
     def reroll_all(self, num_games):
         self.reroll_button.destroy()
-        self.back_button.destroy()
-        self.drafted_games.clear()
-        self.clicked_images.clear()
-        self.title_label.destroy()
-        self.close_button.destroy()
         self.multiplayer_button.destroy()
         self.coop_button.destroy()
         self.multiplayer_rules.destroy()
-        self.start_games(num_games)
+        self.multiplayer_button.destroy()
+        self.coop_button.destroy()
+        self.multiplayer_rules.destroy()
+        for d in self.drafted_games:
+            d.delete()
+        self.title_label.destroy()
+        self.start_games(num_games, False)
     
     def die_roll(self):
         self.dice_button.config(text=str(random.randrange(1,7)))
 
     #Runs Drafted Objective Page
-    def start_games(self, num_games):
-        self.clear_screen(1)
+    def start_games(self, num_games, init=True):
+        if(init):
+            self.clear_screen(1)
         if self.games_selection:
             weighted_images = []
             while weighted_images.__len__() < num_games:
@@ -463,47 +492,31 @@ class ImageGalleryApp:
 
             selected_images = random.sample(weighted_images, num_games)
 
-            #Set up images for canvas buttons
-            zoom = .80  # multiplier for image size by zooming -/+
-            self.rerollbutton_image = Image.open("Resources/Buttons/reroll_games.png")
-            self.rerollbutton_image = ImageTk.PhotoImage(self.rerollbutton_image.resize(tuple([int(zoom * x) for x in self.rerollbutton_image.size])))
-            self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
-            self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
-            self.rolldiebutton_image = Image.open("Resources/Buttons/roll_d6.png")
-            self.rolldiebutton_image = ImageTk.PhotoImage(self.rolldiebutton_image.resize(tuple([int(zoom * x) for x in self.rolldiebutton_image.size])))
-
             #Place canvas buttons for the Drafted Objectives Page
             adjective = self.random_adjective()
             noun = self.random_noun()
             text_r = ""+str(adjective)+ " Pyramid of "+str(noun)
             self.title_label = tk.Label(self.root, text=text_r, font=("Helvetica",50), wraplength=1920, fg="white", bg="black")
             self.title_label.pack(side="top", expand=False, fill="x")
-
-            close_font = font.Font(family="Arial", size=16, weight="bold")  # Adjust font properties as needed
-            self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
-            self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
-            self.close_button.bind("<Button-1>", self.close_program)
+            #self.title_label.lower()
+            self.close_button.lift()
+            self.back_button.lift()
             
             self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
             self.reroll_button.place(x=800, y=1000)  # Adjust the coordinates as needed
 
+            #TODO: Fix Rolld6 Button
             self.dice_button = tk.Button(self.root, image=self.rolldiebutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2")
             self.dice_button.config(command=lambda:self.die_roll())
             self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as neede
-
-            self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
-            self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
-
-            self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
-            self.multiplayerbutton_image = ImageTk.PhotoImage(self.multiplayerbutton_image.resize(tuple([int(zoom * x) for x in self.multiplayerbutton_image.size])))
-            self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
-            self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(zoom * x) for x in self.coopbutton_image.size])))
 
             self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
             self.multiplayer_button.place(x=1620, y=920)  # Adjust the coordinates as needed
 
             self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
             self.coop_button.place(x=1620, y=1000)  # Adjust the coordinates as needed         
+
+            self.multiplayer_rules = tk.Label(self.root, font=("Helvetica",24), wraplength=960, bg="white")
 
             #IMPORTANT: These variables store the inital position and spacing between GameDrafts.
             x_position = 100
@@ -551,7 +564,7 @@ class ImageGalleryApp:
         for game in self.drafted_games:
             t += f"{game.rolled_game}\n\n{file_path[game.rolled_game]['multiplayer']}\n\n"
 
-        self.multiplayer_rules = tk.Label(self.root, text=t, font=("Helvetica",24), wraplength=960, bg="white")
+        self.multiplayer_rules.config(text=t)
         self.multiplayer_rules.pack(side="left", expand=False, fill="x")
     def coop_rules_button(self):
         pass
