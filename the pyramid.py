@@ -8,6 +8,7 @@ import win32api
 import random
 import csv
 import json
+import pyglet
 
 class GameDraft:
     def __init__(self, canvas, rolled_game, x_position, y_position, scale=[1.0,1.0]) -> None:
@@ -173,7 +174,7 @@ class ImageGalleryApp:
         self.current_page = 0
         self.images_per_page = 24
         self.clicked_images = {}
-        
+        self.t_multi = "1"
         self.adjectives = []
         self.nouns = []
 
@@ -558,14 +559,19 @@ class ImageGalleryApp:
 
     def multiplayer_rules_button(self):
         
-        file_path = json.load(open('output.json')) # dict
-        t = ''
+        if len(self.t_multi) != 1:
+            self.multiplayer_rules.place_forget()
+            self.t_multi = "1"
+        else:
+            file_path = json.load(open('output.json')) # dict
+            self.t_multi = 'The person who completes the tertiary objective best receives an additional 50 points and the person who completes it second best gets an additional 25 points.\n\n**If only two people are playing, the second person does not get 25 points.**\n\n\n'
 
-        for game in self.drafted_games:
-            t += f"{game.rolled_game}\n\n{file_path[game.rolled_game]['multiplayer']}\n\n"
+            for game in self.drafted_games:
+                self.t_multi += f"{game.rolled_game} : {file_path[game.rolled_game]['multiplayer']}\n\n"
 
-        self.multiplayer_rules.config(text=t)
-        self.multiplayer_rules.pack(side="left", expand=False, fill="x")
+            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon-Bold",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
+            self.multiplayer_rules.place(x=400, y=440)
+        
     def coop_rules_button(self):
         pass
     def close_program(self, event):
@@ -574,6 +580,8 @@ class ImageGalleryApp:
 if __name__ == "__main__":
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "\\Resources"
     image_folder_path = os.path.join(__location__, 'Card Backs App')  # Replace with the actual folder path containing your images
+
+    pyglet.font.add_file(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')  # Your TTF file name here
 
     root = tk.Tk()
     app = ImageGalleryApp(root, image_folder_path)
