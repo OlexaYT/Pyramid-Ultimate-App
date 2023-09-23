@@ -175,6 +175,7 @@ class ImageGalleryApp:
         self.images_per_page = 24
         self.clicked_images = {}
         self.t_multi = "1"
+        self.t_coop = "1"
         self.adjectives = []
         self.nouns = []
 
@@ -517,7 +518,9 @@ class ImageGalleryApp:
             self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
             self.coop_button.place(x=1620, y=1000)  # Adjust the coordinates as needed         
 
-            self.multiplayer_rules = tk.Label(self.root, font=("Helvetica",24), wraplength=960, bg="white")
+            self.multiplayer_rules = tk.Label(self.root, font=("Kreon-Bold",24), wraplength=960, bg="white")
+            self.coop_rules = tk.Label(self.root, font=("Kreon-Bold",24), wraplength=960, bg="white")
+
 
             #IMPORTANT: These variables store the inital position and spacing between GameDrafts.
             x_position = 100
@@ -563,7 +566,7 @@ class ImageGalleryApp:
             self.multiplayer_rules.place_forget()
             self.t_multi = "1"
         else:
-            file_path = json.load(open('output.json')) # dict
+            file_path = json.load(open('tertiary_and_coop_rules.json')) # dict
             self.t_multi = 'The person who completes the tertiary objective best receives an additional 50 points and the person who completes it second best gets an additional 25 points.\n\n**If only two people are playing, the second person does not get 25 points.**\n\n\n'
 
             for game in self.drafted_games:
@@ -573,7 +576,18 @@ class ImageGalleryApp:
             self.multiplayer_rules.place(x=400, y=440)
         
     def coop_rules_button(self):
-        pass
+        if len(self.t_coop) != 1:
+            self.coop_rules.place_forget()
+            self.t_coop = "1"
+        else:
+            file_path = json.load(open('tertiary_and_coop_rules.json')) # dict
+            self.t_coop = 'Grab your friends and try to complete challenges while playing co-op. Many of the games in the Pyramid have a co-op mode. Additional rules to help balance these objectives for co-op can be found here below.\n\n'
+            for game in self.drafted_games:
+                self.t_coop += f"{game.rolled_game} : {file_path[game.rolled_game]['coop']}\n\n"
+
+            self.coop_rules.config(text=self.t_coop, font=("Kreon-Bold",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
+            self.coop_rules.place(x=400, y=440)
+
     def close_program(self, event):
         self.root.destroy()
 
