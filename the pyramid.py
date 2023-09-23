@@ -290,7 +290,7 @@ class ImageGalleryApp:
         self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
         self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
-        close_font = font.Font(family="Arial", size=16, weight="bold")  # Adjust font properties as needed
+        close_font = font.Font(family="Kreon", size=16, weight="bold")  # Adjust font properties as needed
         self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
         self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
         self.close_button.bind("<Button-1>", self.close_program)
