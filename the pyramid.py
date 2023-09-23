@@ -247,12 +247,14 @@ class ImageGalleryApp:
         self.next_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/next.png"))
         self.previous_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/previous.png"))
         self.donedrafting_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/done_drafting.png"))
+        self.cyclebg_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/cycle_bg.png"))
+        self.rules_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/rules.png"))
 
         # Create a Label to display the background image
         self.bg_label = tk.Label(self.root, image=self.background_photo)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.canvas = tk.Canvas(root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        self.canvas = tk.Canvas(root, width=1920, height=1080, bd=0, highlightthickness=0, bg='#DAEE01')#'#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218,238,1) 
         wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
@@ -271,10 +273,10 @@ class ImageGalleryApp:
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
         self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
         
-        self.cycle_bg_button = ttk.Button(self.root, text="Cycle Background", command=self.cycle_bg, style="Small.TButton")
-        self.cycle_bg_button.place(x=650, y=1020, anchor=tk.CENTER)
+        self.cycle_bg_button = ttk.Button(self.root, image=self.cyclebg_image, command=self.cycle_bg, style="Small.TButton")
+        self.cycle_bg_button.place(x=600, y=1020, anchor=tk.CENTER)
 
-        self.rules_button = ttk.Button(self.root, text="Show Rules", command=self.show_rules, style="Small.TButton")
+        self.rules_button = ttk.Button(self.root, image=self.rules_image, command=self.show_rules, style="Small.TButton")
         self.rules_button.place(x=1300, y=1020, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
@@ -285,11 +287,9 @@ class ImageGalleryApp:
         self.show_page(0)
     
     def top_layer_buttons(self):
-        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
+        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
         self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
-        #[Petra]: Gotta update our font drip before we publish this. Arial and Helvetica do not have the juice.
-        #[Petra]: They are neither fleek nor on-point.
         close_font = font.Font(family="Arial", size=16, weight="bold")  # Adjust font properties as needed
         self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
         self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
@@ -369,42 +369,43 @@ class ImageGalleryApp:
         self.one_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/one.png"))
         self.three_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/three.png"))
         self.five_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/five.png"))
+        self.howmany_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/howmany.png"))
 
         # Create a label asking how many games to play
-        self.title = tk.Label(self.canvas,text="How many games would you like to play?", font=("Helvetica",50))
-        self.title.place(x=962, y=200, anchor=tk.CENTER)
+        self.canvas.create_image(962, 200, image=self.howmany_image)
+        #self.title.place(x=962, y=200, anchor=tk.CENTER)
 
         # Create buttons for 1, 3, and 5 games
         self.games_selection = tk.StringVar()  # Variable to store the selected number of games
 
-        self.games_1_button = tk.Button(self.root, image=self.one_image, font=("Helvetica", 24), command=lambda: self.start_games(1))
+        self.games_1_button = tk.Button(self.root, image=self.one_image, font=("Kreon", 24), command=lambda: self.start_games(1))
         self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
 
-        self.games_3_button = tk.Button(self.root, image=self.three_image, font=("Helvetica", 24), command=lambda: self.start_games(3))
+        self.games_3_button = tk.Button(self.root, image=self.three_image, font=("Kreon", 24), command=lambda: self.start_games(3))
         self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
 
-        self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Helvetica", 24), command=lambda: self.start_games(5))
+        self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Kreon", 24), command=lambda: self.start_games(5))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
 
-        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
+        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
         #self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
     def show_rules(self):
         self.clear_screen(0)
         # Create a label asking how many games to play
-        self.title = tk.Label(self.canvas,text="Rules", font=("Helvetica",50))
-        self.title.place(x=962, y=200, anchor=tk.CENTER)
+        #self.title = tk.Label(self.canvas,text="Rules", font=("Kreon",50))
+        #self.title.place(x=962, y=200, anchor=tk.CENTER)
 
         self.games_1_button = tk.Button(self.root, image=self.rules[0], command=lambda : self.return_button(1))
         self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
 
-        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Helvetica", 24), command=lambda : self.return_button(1))
+        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Kreon", 24), command=lambda : self.return_button(1))
         self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
 
-        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Helvetica", 24), command=lambda : self.return_button(1))
+        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Kreon", 24), command=lambda : self.return_button(1))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
 
-        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
+        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
         #self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
     
     def return_button(self, cur_screen):
@@ -498,24 +499,24 @@ class ImageGalleryApp:
             adjective = self.random_adjective()
             noun = self.random_noun()
             text_r = ""+str(adjective)+ " Pyramid of "+str(noun)
-            self.title_label = tk.Label(self.root, text=text_r, font=("Helvetica",50), wraplength=1920, fg="white", bg="black")
+            self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",50), wraplength=1920, fg="white", bg="black")
             self.title_label.pack(side="top", expand=False, fill="x")
             #self.title_label.lower()
             self.close_button.lift()
             self.back_button.lift()
             
-            self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
+            self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
             self.reroll_button.place(x=800, y=1000)  # Adjust the coordinates as needed
 
             #TODO: Fix Rolld6 Button
-            self.dice_button = tk.Button(self.root, image=self.rolldiebutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2")
+            self.dice_button = tk.Button(self.root, image=self.rolldiebutton_image, font="Kreon", bg="black", fg="white", cursor="hand2")
             self.dice_button.config(command=lambda:self.die_roll())
             self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as neede
 
-            self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
+            self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
             self.multiplayer_button.place(x=1620, y=920)  # Adjust the coordinates as needed
 
-            self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Helvetica", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
+            self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
             self.coop_button.place(x=1620, y=1000)  # Adjust the coordinates as needed         
 
             self.multiplayer_rules = tk.Label(self.root, font=("Kreon-Bold",24), wraplength=960, bg="white")
@@ -572,7 +573,7 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_multi += f"{game.rolled_game} : {file_path[game.rolled_game]['multiplayer']}\n\n"
 
-            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon-Bold",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
+            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
             self.multiplayer_rules.place(x=400, y=440)
         
     def coop_rules_button(self):
@@ -585,7 +586,7 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_coop += f"{game.rolled_game} : {file_path[game.rolled_game]['coop']}\n\n"
 
-            self.coop_rules.config(text=self.t_coop, font=("Kreon-Bold",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
+            self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
             self.coop_rules.place(x=400, y=440)
 
     def close_program(self, event):
@@ -594,10 +595,11 @@ class ImageGalleryApp:
 if __name__ == "__main__":
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "\\Resources"
     image_folder_path = os.path.join(__location__, 'Card Backs App')  # Replace with the actual folder path containing your images
-
+    print(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')
     pyglet.font.add_file(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')  # Your TTF file name here
 
     root = tk.Tk()
+    root.wm_attributes("-transparentcolor", 'grey')
     app = ImageGalleryApp(root, image_folder_path)
 
     root.attributes('-fullscreen', True)
