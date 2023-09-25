@@ -232,7 +232,7 @@ class ImageGalleryApp:
             self.images.append((image, filename))  # Store both image and filename
     
     def load_rules(self):
-        image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\rules'
+        image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources\\rules'
         images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
         for filename in images:
             image_path = os.path.join(image_folder, filename)
