@@ -477,6 +477,15 @@ class ImageGalleryApp:
         for d in self.drafted_games:
             d.delete()
         self.title_label.destroy()
+        self.canvas.destroy()
+        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        hwnd = self.canvas.winfo_id()
+        colorkey = win32api.RGB(218, 238, 1)
+        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
+        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
+        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
+        self.canvas.place(x=0, y=0)
         self.start_games(num_games, False)
     
     def die_roll(self):
@@ -513,14 +522,12 @@ class ImageGalleryApp:
             self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
             self.reroll_button.place(x=800, y=1000)  # Adjust the coordinates as needed
 
-            #TODO: Fix Rolld6 Button
             self.dice_button = tk.Button(self.root, image=self.rolldiebutton_image, font="Kreon", bg="black", fg="white", cursor="hand2")
             self.dice_button.config(command=lambda:self.die_roll())
             self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as needed
             self.roll_number = 0
             self.roll_result = -1
             output = "Result: " + str(self.roll_result) + ": Rolls: " + str(self.roll_number)
-
             self.canvas.create_text((300,1000),text=output,font=("Kreon",12),tags="rolltext")
 
             self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
