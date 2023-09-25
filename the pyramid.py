@@ -29,7 +29,7 @@ class GameDraft:
         self.secondaries.clear()
 
         #[Petra] Edited curse probability for debug purposes
-        curse = bool(random.randrange(0,5)==0)
+        curse = bool(random.randrange(0,20)==0)
         if (curse):
            self.scale = [self.scale[0], self.scale[1]]
            self.CardImageButtonFactory('c')
@@ -492,8 +492,8 @@ class ImageGalleryApp:
         self.roll_result = random.randrange(1,7)
         self.roll_number = self.roll_number+1
         self.canvas.delete("rolltext")
-        output = "Rolled " + str(self.roll_result) + ": Roll Number: " + str(self.roll_number)
-        self.canvas.create_text((300,1000),text=output,font=("Kreon",12),tags="rolltext")
+        output = str(self.roll_result)
+        self.canvas.create_text((300,1030),text=output,font=("Kreon",40),fill="white",tags="rolltext")
 
     #Runs Drafted Objective Page
     def start_games(self, num_games, init=True):
@@ -527,7 +527,7 @@ class ImageGalleryApp:
             self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as needed
             self.roll_number = 0
             self.roll_result = -1
-            output = "Result: " + str(self.roll_result) + ": Rolls: " + str(self.roll_number)
+            output = ""
             self.canvas.create_text((300,1000),text=output,font=("Kreon",12),tags="rolltext")
 
             self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
