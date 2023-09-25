@@ -282,13 +282,14 @@ class ImageGalleryApp:
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
 
-        self.top_layer_buttons()
+        self.top_layer_buttons(0)
         
         self.show_page(0)
     
-    def top_layer_buttons(self):
-        self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(2))
-        self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+    def top_layer_buttons(self, page = 0):
+        if(page > 0):
+            self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda p=page: self.return_button(p))
+            self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
 
         close_font = font.Font(family="Kreon", size=16, weight="bold")  # Adjust font properties as needed
         self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
@@ -365,6 +366,7 @@ class ImageGalleryApp:
 
     def choose_number_of_drafts(self):
         self.clear_screen(0)
+        self.top_layer_buttons(1)
 
         self.one_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/one.png"))
         self.three_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/three.png"))
@@ -392,21 +394,19 @@ class ImageGalleryApp:
 
     def show_rules(self):
         self.clear_screen(0)
+        self.top_layer_buttons(1)
         # Create a label asking how many games to play
         #self.title = tk.Label(self.canvas,text="Rules", font=("Kreon",50))
         #self.title.place(x=962, y=200, anchor=tk.CENTER)
 
-        self.games_1_button = tk.Button(self.root, image=self.rules[0], command=lambda : self.return_button(1))
+        self.games_1_button = tk.Button(self.root, image=self.rules[0])
         self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
 
-        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Kreon", 24), command=lambda : self.return_button(1))
+        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Kreon", 24))
         self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
 
-        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Kreon", 24), command=lambda : self.return_button(1))
+        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Kreon", 24))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
-
-        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
-        #self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
     
     def return_button(self, cur_screen):
         self.clear_screen(cur_screen)
@@ -415,7 +415,8 @@ class ImageGalleryApp:
     def clear_screen(self, prev_screen_index=0):
         self.canvas.destroy()
         self.clicked_frame.destroy()
-        self.destroy_top_layer()
+        if prev_screen_index != 0:
+            self.destroy_top_layer()
         match prev_screen_index:
             case 0: #Image Selection Screem
                 self.next_button.place_forget()
@@ -423,7 +424,7 @@ class ImageGalleryApp:
                 self.done_button.place_forget()
                 self.rules_button.place_forget()
                 self.cycle_bg_button.place_forget()
-            case 1: # Game Number Selection Screen
+            case 1: # Game Number Selection Screen / Rules Screen
                 self.games_1_button.place_forget()
                 self.games_3_button.place_forget()
                 self.games_5_button.place_forget()
@@ -448,7 +449,6 @@ class ImageGalleryApp:
 
         self.clicked_frame = tk.Frame(self.root)
         self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
-        self.top_layer_buttons()
     
     def read_csv(self):
         csv_file_path = 'word_bank.csv'
@@ -477,15 +477,29 @@ class ImageGalleryApp:
         for d in self.drafted_games:
             d.delete()
         self.title_label.destroy()
+        self.canvas.destroy()
+        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        hwnd = self.canvas.winfo_id()
+        colorkey = win32api.RGB(218, 238, 1)
+        wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+        new_exstyle = wnd_exstyle | win32con.WS_EX_LAYERED
+        win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, new_exstyle)
+        win32gui.SetLayeredWindowAttributes(hwnd, colorkey, 255, win32con.LWA_COLORKEY)
+        self.canvas.place(x=0, y=0)
         self.start_games(num_games, False)
     
     def die_roll(self):
-        self.dice_button.config(text=str(random.randrange(1,7)))
+        self.roll_result = random.randrange(1,7)
+        self.roll_number = self.roll_number+1
+        self.canvas.delete("rolltext")
+        output = "Rolled " + str(self.roll_result) + ": Roll Number: " + str(self.roll_number)
+        self.canvas.create_text((300,1000),text=output,font=("Kreon",12),tags="rolltext")
 
     #Runs Drafted Objective Page
     def start_games(self, num_games, init=True):
         if(init):
             self.clear_screen(1)
+            self.top_layer_buttons(2)
         if self.games_selection:
             weighted_images = []
             while weighted_images.__len__() < num_games:
@@ -498,7 +512,7 @@ class ImageGalleryApp:
             #Place canvas buttons for the Drafted Objectives Page
             adjective = self.random_adjective()
             noun = self.random_noun()
-            text_r = ""+str(adjective)+ " Pyramid of "+str(noun)
+            text_r = "The "+str(adjective)+ " Pyramid of "+str(noun)
             self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",50), wraplength=1920, fg="white", bg="black")
             self.title_label.pack(side="top", expand=False, fill="x")
             #self.title_label.lower()
@@ -508,10 +522,13 @@ class ImageGalleryApp:
             self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
             self.reroll_button.place(x=800, y=1000)  # Adjust the coordinates as needed
 
-            #TODO: Fix Rolld6 Button
             self.dice_button = tk.Button(self.root, image=self.rolldiebutton_image, font="Kreon", bg="black", fg="white", cursor="hand2")
             self.dice_button.config(command=lambda:self.die_roll())
-            self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as neede
+            self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as needed
+            self.roll_number = 0
+            self.roll_result = -1
+            output = "Result: " + str(self.roll_result) + ": Rolls: " + str(self.roll_number)
+            self.canvas.create_text((300,1000),text=output,font=("Kreon",12),tags="rolltext")
 
             self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
             self.multiplayer_button.place(x=1620, y=920)  # Adjust the coordinates as needed
