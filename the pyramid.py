@@ -239,12 +239,16 @@ class ImageGalleryApp:
     def load_rules(self):
         image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources\\rules'
         images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        i = 0
         for filename in images:
             image_path = os.path.join(image_folder, filename)
             image = Image.open(image_path)
             image = image.resize((int(CardImageButton.button_width*1.5), int(CardImageButton.button_height*1.5)))
+            if i == 3:
+                image = image.resize((CardImageButton.button_width // 4, CardImageButton.button_height // 4))
             image = ImageTk.PhotoImage(image)
             self.rules.append(image)  # Store both image and filename
+            i += 1
         if len(images) < 1:
             print(str("Error loading rule images or no images in rules folder"))
 
@@ -276,7 +280,6 @@ class ImageGalleryApp:
         self.prev_button.place(x=220, y=950)
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
-        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
         
         self.cycle_bg_button = ttk.Button(self.root, image=self.cyclebg_image, command=self.cycle_bg, style="Small.TButton")
         self.cycle_bg_button.place(x=600, y=1020, anchor=tk.CENTER)
@@ -336,7 +339,11 @@ class ImageGalleryApp:
             self.clicked_images[filename] += 1
         else:
             self.clicked_images[filename] = 1
-        if (sum(self.clicked_images.values()) >= 15):
+        if (sum(self.clicked_images.values()) > 14):
+            if (sum(self.clicked_images.values()) == 15):
+                clicked_label = tk.Label(self.clicked_frame, image=self.rules[3])
+                clicked_label.image = self.rules[3]
+                clicked_label.pack(side=tk.LEFT)
             return
         clicked_image_path = os.path.join(self.image_folder, filename)
         clicked_image = Image.open(clicked_image_path)
@@ -346,12 +353,15 @@ class ImageGalleryApp:
         clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
         clicked_label.image = clicked_photo
         clicked_label.pack(side=tk.LEFT)
+        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
     
     def remove_from_clicked_images(self, filename):
         if filename in self.clicked_images:
             self.clicked_images[filename] -= 1
         else:
-            self.clicked_images[filename] = 0        
+            self.clicked_images[filename] = 0   
+        if (sum(self.clicked_images.values()) < 1):
+            self.done_button.place_forget()
         self.generate_selected_deck_images()
 
     def generate_selected_deck_images(self):
@@ -373,8 +383,8 @@ class ImageGalleryApp:
                     i += 1
                     cap += 1
                     if (cap > 14):
-                        clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
-                        clicked_label.image = clicked_photo
+                        clicked_label = tk.Label(self.clicked_frame, image=self.rules[3])
+                        clicked_label.image = self.rules[3]
                         clicked_label.pack(side=tk.LEFT)
                         return
 
