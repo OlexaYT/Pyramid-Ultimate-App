@@ -632,8 +632,11 @@ if __name__ == "__main__":
     pyglet.font.add_file(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')  # Your TTF file name here
 
     root = tk.Tk()
+    root.geometry('1920x1080')
+    root.resizable(width=False, height=False)
     root.wm_attributes("-transparentcolor", 'grey')
+    if GetSystemMetrics(0) == 1920 and GetSystemMetrics(1) == 1080:
+        root.attributes('-fullscreen', True)
     app = ImageGalleryApp(root, image_folder_path)
 
-    root.attributes('-fullscreen', True)
     root.mainloop()
