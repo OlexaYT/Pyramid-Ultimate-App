@@ -1,262 +1,262 @@
 {
     "alina of the arena": {
-        "multiplayer": "Highest score gets an additional 50 points",
+        "multiplayer": "Highest score",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "apex legends": {
-        "multiplayer": "Highest combined kills/assists in most successful game [if tied, go by highest kills] gets an additional 50 points",
+        "multiplayer": "Highest combined kills/assists in most successful game [if tied, go by highest kills]",
         "coop": "Squad up and play together and, you know, have a fun time, that's what it's all about"
     },
     "astronarch": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "atomicrops": {
-        "multiplayer": "Highest score at the end of run gets an additional 50 points",
+        "multiplayer": "Highest score at the end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "baba is you": {
-        "multiplayer": "Fastest time to complete each level gets an additional 50 points",
+        "multiplayer": "Fastest time to complete each level",
         "coop": "Work on the same levels together, subtract 5 min from each objective"
     },
     "backpack hero": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "bloons td6": {
-        "multiplayer": "Highest final round reached [including going endless] gets an additional 50 points",
-        "coop": "This game can be played multiplayer but frick me if I have any clue how"
+        "multiplayer": "Highest final round reached [including going endless]",
+        "coop": "Play Co-op"
     },
     "brotato": {
-        "multiplayer": "Least Max HP at end of run gets an additional 50 points",
+        "multiplayer": "Least Max HP at end of run",
         "coop": "Increase Danger Level by 2, one of you must win the run"
     },
     "caves of qud": {
-        "multiplayer": "Lowest level/total exp at objective completion gets an additional 50 points",
+        "multiplayer": "Lowest level/total exp at objective completion",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "celeste": {
-        "multiplayer": "Lowest number of deaths in chapter gets an additional 50 points",
+        "multiplayer": "Lowest number of deaths in chapter",
         "coop": "Multiply the death count by # of players, combined you must be below that number"
     },
     "circadian dice": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "crypt of the necrodancer": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "cult of the lamb": {
-        "multiplayer": "Most followers recruited at end of run gets an additional 50 points",
+        "multiplayer": "Most followers recruited at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "cuphead": {
-        "multiplayer": "Highest letter grade at end of level gets an additional 50 points",
+        "multiplayer": "Highest letter grade at end of level",
         "coop": "If 2 player coop, play the challenges in coop."
     },
     "darkest dungeon - butcher's circus": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Quickest kill (in rounds)",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "dead cells": {
-        "multiplayer": "Most health flask chargest at end of run gets an additional 50 points",
+        "multiplayer": "Most health flask chargest at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "dead estate": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "demoncrawl": {
-        "multiplayer": "Most hearts at end of run gets an additional 50 points",
+        "multiplayer": "Most hearts at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "descenders": {
-        "multiplayer": "Furthest area reached gets an additional 50 points",
+        "multiplayer": "Furthest area reached",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "despots game": {
-        "multiplayer": "Most humans at end of run gets an additional 50 points",
+        "multiplayer": "Most humans at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "dicey dungeons": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "dome keeper": {
-        "multiplayer": "Most triangles in inventory at end of run gets an additional 50 points",
+        "multiplayer": "Most triangles in inventory at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "downwell": {
-        "multiplayer": "Most gems at end of run gets an additional 50 points",
+        "multiplayer": "Most gems at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "dungeon deathball": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "enter the gungeon": {
-        "multiplayer": "Most health [shields and hearts] at end of run gets an additional 50 points",
+        "multiplayer": "Most health [shields and hearts] at end of run",
         "coop": "If 2 player coop, play the challenges in coop."
     },
     "exit the gungeon": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "fights in tight spaces": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "fortnite": {
-        "multiplayer": "Most kills at end of game gets an additional 50 points",
+        "multiplayer": "Most kills at end of game",
         "coop": "Squad up together and complete the challenges."
     },
     "forward escape the fold": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "ftl": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "ftl multiverse": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "geoguessr": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Multiply the score in the primary objective by # of players, combined scores must be greater than the that number"
     },
     "golf with your friends": {
-        "multiplayer": "Lowest score at end of course gets an additional 50 points",
+        "multiplayer": "Lowest score at end of course",
         "coop": "Play together. Multiply the stroke count in the primary objective by # of players, combined scores must be lower than the that number"
     },
     "griftlands": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "hades": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "heart and slash": {
-        "multiplayer": "Most buckets at end of run gets an additional 50 points",
+        "multiplayer": "Most buckets at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "hollow knight": {
-        "multiplayer": "Lowest time taken to complete objectives gets an additional 50 points",
+        "multiplayer": "Lowest time taken to complete objectives",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "inscryption": {
-        "multiplayer": "Fewest cards at end of run gets an additional 50 points",
+        "multiplayer": "Fewest cards at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "into the breach": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "isle of arrows": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "just king": {
-        "multiplayer": "Most Money at end of run gets an additional 50 points",
+        "multiplayer": "Most Money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "katana zero": {
-        "multiplayer": "Lowest time spend to complete the objectives gets an additional 50 points",
+        "multiplayer": "Lowest time spend to complete the objectives",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "loop hero": {
-        "multiplayer": "Most resource orbs at end of run gets an additional 50 points",
+        "multiplayer": "Most resource orbs at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "luck be a landlord": {
-        "multiplayer": "Most money after final rent cycle [do not go into endless] gets an additional 50 points",
+        "multiplayer": "Most money after final rent cycle [do not go into endless]",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "marvel snap": {
-        "multiplayer": "Number of locations won in combined wins gets an additional 50 points",
+        "multiplayer": "Number of locations won in combined wins",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "minecraft": {
-        "multiplayer": "Lowest time taken to successfully complete given objectives gets an additional 50 points",
+        "multiplayer": "Lowest time taken to successfully complete given objectives",
         "coop": "Play together, flip an additional objective for each player. If more than one player dies, you lose."
     },
     "mini motorways": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Add 100 to the primary objective, one of you must complete the objective"
     },
     "monolith": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "monster camp": {
-        "multiplayer": "Highest stat total at end of run in online lobby gets an additional 50 points",
+        "multiplayer": "Highest stat total at end of run in online lobby",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "monster prom": {
-        "multiplayer": "Highest stat total at end of run in online lobby gets an additional 50 points",
+        "multiplayer": "Highest stat total at end of run in online lobby",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "monster roadtrip": {
-        "multiplayer": "Highest stat total at end of run in online lobby gets an additional 50 points",
+        "multiplayer": "Highest stat total at end of run in online lobby",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "monster train": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "neophyte": {
-        "multiplayer": "Total score at end of run gets an additional 50 points",
+        "multiplayer": "Total score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "nova drift": {
-        "multiplayer": "Highest final round reached [after completing the objective] gets an additional 50 points",
+        "multiplayer": "Highest final round reached [after completing the objective]",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "nuclear throne": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "one step from eden": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "peglin": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective. Increase cruciball level by 2"
     },
     "phantom abyss": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "plate up": {
-        "multiplayer": "Total money at end of 15 days gets an additional 50 points",
+        "multiplayer": "Total money at end of 15 days",
         "coop": "Play together."
     },
     "poker quest": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "railroad ink": {
-        "multiplayer": "Highest score at end of game. Play using same dice rolls [if possible] gets an additional 50 points",
+        "multiplayer": "Highest score at end of game. Play using same dice rolls [if possible]",
         "coop": "Play together!"
     },
     "revita": {
-        "multiplayer": "Highest health at end of run gets an additional 50 points",
+        "multiplayer": "Highest health at end of run",
         "coop": "Increase shard level by 5. One of you must beat the objective"
     },
     "ring of pain": {
-        "multiplayer": "Most money at end run gets an additional 50 points",
+        "multiplayer": "Most money at end run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "risk of rain": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "risk of rain 2": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Play together!"
     },
     "rounds": {
@@ -264,23 +264,23 @@
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "shogun showdown": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "shotgun king": {
-        "multiplayer": "Highest floor at end of endless run gets an additional 50 points",
+        "multiplayer": "Highest floor at end of endless run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "shovel knight pocket dungeon": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "slay the spire": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "If you know how to work the coop mod, play that. If not, Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "slay the spire downfall": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "If you know how to work the coop mod, play that. If not, Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "slice n dice": {
@@ -288,91 +288,227 @@
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "slime rancher": {
-        "multiplayer": "Highest plort bonus at end of run gets an additional 50 points",
+        "multiplayer": "Highest plort bonus at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "space gladiators": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "spelunky": {
-        "multiplayer": "Highest score [money] at end of run gets an additional 50 points",
+        "multiplayer": "Highest score [money] at end of run",
         "coop": "Play coop."
     },
     "spelunky 2": {
-        "multiplayer": "Highest score [money] at end of run gets an additional 50 points",
+        "multiplayer": "Highest score [money] at end of run",
         "coop": "Play coop."
     },
     "sporcle": {
-        "multiplayer": "Highest mean percentage across all quizzes gets an additional 50 points",
+        "multiplayer": "Highest mean percentage across all quizzes",
         "coop": "Each player, minus one, must get above average on the quizzes drawn"
     },
     "stardew valley": {
-        "multiplayer": "Most money at end of three days gets an additional 50 points",
+        "multiplayer": "Most money at end of three days",
         "coop": "Play coop if you can."
     },
     "streets of rogue": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Play coop!"
     },
     "super auto pets": {
-        "multiplayer": "Most live at end of run gets an additional 50 points",
+        "multiplayer": "Most live at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "temp zero": {
-        "multiplayer": "Highest score at end of run gets an additional 50 points",
+        "multiplayer": "Highest score at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "binding of isaac": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Play in True Coop if you can"
     },
     "binding of isaac greed mode": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Play in True Coop if you can"
     },
     "binding of isaac modded": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Play in True Coop if you can"
     },
     "binding of isaac repentance": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Play in True Coop if you can"
     },
     "legend of bumbo": {
-        "multiplayer": "Most health at end of run gets an additional 50 points",
+        "multiplayer": "Most health at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "tiny rogues": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "ultrakill": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "undermine": {
-        "multiplayer": "Most curses at end of run gets an additional 50 points",
+        "multiplayer": "Most curses at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "vampire survivors": {
-        "multiplayer": "Most money at end of run gets an additional 50 points",
+        "multiplayer": "Most money at end of run",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "vvvvvv": {
-        "multiplayer": "Lowest time taken to complete objectives gets an additional 50 points",
+        "multiplayer": "Lowest time taken to complete objectives",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
     },
     "wikipedia": {
-        "multiplayer": "Fewest clicks to reach location gets an additional 50 points",
+        "multiplayer": "Fewest clicks to reach location",
         "coop": "Each person gets their own secondary objective to reach. All players minus one must complete their objective."
     },
     "wordle": {
-        "multiplayer": "Lowest number of guesses for primary and secondary objectives combined gets an additional 50 points",
+        "multiplayer": "Lowest number of guesses for primary and secondary objectives combined",
         "coop": "Each person gets their own secondary objective to complete. All players minus one must complete their objective. No collaborating on the Wordle!"
     },
     "world of horror": {
-        "multiplayer": "Lowest Doom at run end gets an additional 50 points",
+        "multiplayer": "Lowest Doom at run end",
         "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "brutal orchestra": {
+        "multiplayer": "Most money at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "death road to canada": {
+        "multiplayer": "Highest total zombie kills",
+        "coop": "Play in co-op mode"
+    },
+    "gimmiko": {
+        "multiplayer": "Highest health remaining at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "hitman": {
+        "multiplayer": "Most optional objectives completed",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "noita": {
+        "multiplayer": "I know nothing about Noita, good luck lol",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "paper planet": {
+        "multiplayer": "Most health at end of run",
+        "coop": "Play local screen coop!"
+    },
+    "pawnbarian": {
+        "multiplayer": "Most floors of the Gauntlet completed after the primary goal has been achieved",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "rocket league": {
+        "multiplayer": "Play against each other!",
+        "coop": "Play with each other!"
+    },
+    "shovel knight showdown": {
+        "multiplayer": "Play against each other!",
+        "coop": ":D"
+    },
+    "snkrx": {
+        "multiplayer": "Most money at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "slay the spire modded": {
+        "multiplayer": "Highest score at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "super mario crossover": {
+        "multiplayer": "Fastest time to complete primary",
+        "coop": "Switch players after each life lost"
+    },
+    "voidigo": {
+        "multiplayer": "Highest amount of shards at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "warioware": {
+        "multiplayer": "Continue playing after primary objective has been completed - highest score at game over",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "we love katamari": {
+        "multiplayer": "Biggest katamari",
+        "coop": "Play in co-op mode"
+    },
+    "wildfrost": {
+        "multiplayer": "Most money at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "bpm": {
+        "multiplayer": "Highest score at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "void rains upon her heart": {
+        "multiplayer": "Highest score on run end (if both players complete their run, else Highest lvl boss loved)",
+        "coop": "One player plays the standard character, the second plays the Altered version or flips a new primary. Players have the same secondary objective. When possible, coordinate so that you don't love the same boss twice."
+    },
+    "beyond the long night": {
+        "multiplayer": "Most balloons at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "binding of isaac flash": {
+        "multiplayer": "Most health at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "endgame of devil": {
+        "multiplayer": "Most gems remaining at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "hextraction": {
+        "multiplayer": "Victory on earliest turn",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "zelda breath of the wild": {
+        "multiplayer": "Fastest time to complete",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "marvel champions": {
+        "multiplayer": "Least threat on main scheme",
+        "coop": "Play as a co-op game"
+    },
+    "mini metro": {
+        "multiplayer": "Highest score at end of run",
+        "coop": "Add 100 to the primary objective, one of you must complete the objective"
+    },
+    "sternly worded adventures": {
+        "multiplayer": "Longest word created at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "super dungeon maker": {
+        "multiplayer": "Most health left upon victory",
+        "coop": "Flip secondary objectives equal to the # of players, everyone must complete their own secondary objective with the flipped primary objective"
+    },
+    "thronefall": {
+        "multiplayer": "Most money at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "wipeout hd fury": {
+        "multiplayer": "Highest amount of points at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "a to z": {
+        "multiplayer": "Compare words found to other players, whoever has the least matching words to others",
+        "coop": "Fill your lists together!"
+    },
+    "chess": {
+        "multiplayer": "Play against each other",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "dungreed": {
+        "multiplayer": "Most money at end of run",
+        "coop": "Flip primary objectives equal to the # of players, everyone must complete a primary objective with the flipped secondary objective"
+    },
+    "exercise": {
+        "multiplayer": "This is a meme deck, why are you looking at the multiplayer rules for it?",
+        "coop": "Just workout together :)"
+    },
+    "": {
+        "multiplayer": "",
+        "coop": ""
     }
 }
