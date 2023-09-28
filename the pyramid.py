@@ -276,7 +276,6 @@ class ImageGalleryApp:
         self.prev_button.place(x=220, y=950)
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
-        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
         
         self.cycle_bg_button = ttk.Button(self.root, image=self.cyclebg_image, command=self.cycle_bg, style="Small.TButton")
         self.cycle_bg_button.place(x=600, y=1020, anchor=tk.CENTER)
@@ -346,12 +345,15 @@ class ImageGalleryApp:
         clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
         clicked_label.image = clicked_photo
         clicked_label.pack(side=tk.LEFT)
+        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
     
     def remove_from_clicked_images(self, filename):
         if filename in self.clicked_images:
             self.clicked_images[filename] -= 1
         else:
-            self.clicked_images[filename] = 0        
+            self.clicked_images[filename] = 0   
+        if (sum(self.clicked_images.values()) < 1):
+            self.done_button.place_forget()
         self.generate_selected_deck_images()
 
     def generate_selected_deck_images(self):
