@@ -239,12 +239,16 @@ class ImageGalleryApp:
     def load_rules(self):
         image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources\\rules'
         images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        i = 0
         for filename in images:
             image_path = os.path.join(image_folder, filename)
             image = Image.open(image_path)
             image = image.resize((int(CardImageButton.button_width*1.5), int(CardImageButton.button_height*1.5)))
+            if i == 3:
+                image = image.resize((CardImageButton.button_width // 4, CardImageButton.button_height // 4))
             image = ImageTk.PhotoImage(image)
             self.rules.append(image)  # Store both image and filename
+            i += 1
         if len(images) < 1:
             print(str("Error loading rule images or no images in rules folder"))
 
@@ -335,7 +339,11 @@ class ImageGalleryApp:
             self.clicked_images[filename] += 1
         else:
             self.clicked_images[filename] = 1
-        if (sum(self.clicked_images.values()) >= 15):
+        if (sum(self.clicked_images.values()) > 14):
+            if (sum(self.clicked_images.values()) == 15):
+                clicked_label = tk.Label(self.clicked_frame, image=self.rules[3])
+                clicked_label.image = self.rules[3]
+                clicked_label.pack(side=tk.LEFT)
             return
         clicked_image_path = os.path.join(self.image_folder, filename)
         clicked_image = Image.open(clicked_image_path)
@@ -375,8 +383,8 @@ class ImageGalleryApp:
                     i += 1
                     cap += 1
                     if (cap > 14):
-                        clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
-                        clicked_label.image = clicked_photo
+                        clicked_label = tk.Label(self.clicked_frame, image=self.rules[3])
+                        clicked_label.image = self.rules[3]
                         clicked_label.pack(side=tk.LEFT)
                         return
 
