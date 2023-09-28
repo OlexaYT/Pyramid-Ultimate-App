@@ -51,10 +51,10 @@ class GameDraft:
                 self.CardImageButtonFactory('p')
                 self.CardImageButtonFactory('s', [0.66,0.66])
                 self.CardImageButtonFactory('s', [0.66,0.66])
-            case "question deck free":
+            case "zzz question deck free":
                 for i in range(5):
                     self.CardImageButtonFactory('p', [0.66, 0.66])
-            case "question deck paid":
+            case "zzz question deck paid":
                 for i in range(5):
                     self.CardImageButtonFactory('p', [0.66, 0.66])
             case _:
@@ -210,16 +210,16 @@ class ImageGalleryApp:
         self.create_widgets()
     
     def load_bgs(self):
-        image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources\\bgs'
+        image_folder= os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))+'\\Resources\\BACKGROUNDS'
         images = [f for f in os.listdir(image_folder) if f.endswith(('.png', '.jpg', '.jpeg'))]
         for filename in images:
             image_path = os.path.join(image_folder, filename)
             image = Image.open(image_path)
-            image.resize([self.window_width, self.window_height])
+            image = image.resize([self.window_width, self.window_height])
             image = ImageTk.PhotoImage(image)
             self.bg.append(image)  # Store both image and filename
         if len(images) < 1:
-            print(str("Error loading bg images or no images in bgs folder"))
+            print(str("Error loading bg images or no images in BACKGROUNDS folder"))
     
     def cycle_bg(self):
         self.bg_index += 1
@@ -336,6 +336,8 @@ class ImageGalleryApp:
             self.clicked_images[filename] += 1
         else:
             self.clicked_images[filename] = 1
+        if (sum(self.clicked_images.values()) >= 15):
+            return
         clicked_image_path = os.path.join(self.image_folder, filename)
         clicked_image = Image.open(clicked_image_path)
         clicked_image = clicked_image.resize((CardImageButton.button_width // 4, CardImageButton.button_height // 4))
@@ -353,6 +355,7 @@ class ImageGalleryApp:
         self.generate_selected_deck_images()
 
     def generate_selected_deck_images(self):
+        cap = 0
         for widget in self.clicked_frame.winfo_children():
             widget.destroy()
         for filename in self.clicked_images:
@@ -368,6 +371,12 @@ class ImageGalleryApp:
                     clicked_label.image = clicked_photo
                     clicked_label.pack(side=tk.LEFT)
                     i += 1
+                    cap += 1
+                    if (cap > 14):
+                        clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
+                        clicked_label.image = clicked_photo
+                        clicked_label.pack(side=tk.LEFT)
+                        return
 
     def choose_number_of_drafts(self):
         self.clear_screen(0)
@@ -380,7 +389,6 @@ class ImageGalleryApp:
 
         # Create a label asking how many games to play
         self.canvas.create_image(962, 200, image=self.howmany_image)
-        #self.title.place(x=962, y=200, anchor=tk.CENTER)
 
         # Create buttons for 1, 3, and 5 games
         self.games_selection = tk.StringVar()  # Variable to store the selected number of games
@@ -394,15 +402,9 @@ class ImageGalleryApp:
         self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Kreon", 24), command=lambda: self.start_games(5))
         self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
 
-        #self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.return_button(1))
-        #self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
-
     def show_rules(self):
         self.clear_screen(0)
         self.top_layer_buttons(1)
-        # Create a label asking how many games to play
-        #self.title = tk.Label(self.canvas,text="Rules", font=("Kreon",50))
-        #self.title.place(x=962, y=200, anchor=tk.CENTER)
 
         self.games_1_button = tk.Button(self.root, image=self.rules[0])
         self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
@@ -520,7 +522,6 @@ class ImageGalleryApp:
             text_r = "The "+str(adjective)+ " Pyramid of "+str(noun)
             self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",50), wraplength=self.window_width, fg="white", bg="black")
             self.title_label.pack(side="top", expand=False, fill="x")
-            #self.title_label.lower()
             self.close_button.lift()
             self.back_button.lift()
             
@@ -616,7 +617,7 @@ class ImageGalleryApp:
 
 if __name__ == "__main__":
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "\\Resources"
-    image_folder_path = os.path.join(__location__, 'Card Backs App')  # Replace with the actual folder path containing your images
+    image_folder_path = os.path.join(__location__, 'CARD BACKS APP')  # Replace with the actual folder path containing your images
     print(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')
     pyglet.font.add_file(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')  # Your TTF file name here
 
