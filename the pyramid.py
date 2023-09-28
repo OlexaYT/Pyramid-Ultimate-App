@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import win32gui
 import win32con
 import win32api
+from win32api import GetSystemMetrics
 import random
 import csv
 import json
@@ -198,6 +199,9 @@ class ImageGalleryApp:
         self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
         self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(zoom * x) for x in self.coopbutton_image.size])))
 
+        self.window_width = GetSystemMetrics(0)
+        self.window_height = GetSystemMetrics(1)
+
         self.load_bgs()
         self.background_photo = self.bg[0]
         self.read_csv()
@@ -211,6 +215,7 @@ class ImageGalleryApp:
         for filename in images:
             image_path = os.path.join(image_folder, filename)
             image = Image.open(image_path)
+            image.resize([self.window_width, self.window_height])
             image = ImageTk.PhotoImage(image)
             self.bg.append(image)  # Store both image and filename
         if len(images) < 1:
@@ -254,7 +259,7 @@ class ImageGalleryApp:
         self.bg_label = tk.Label(self.root, image=self.background_photo)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.canvas = tk.Canvas(root, width=1920, height=1080, bd=0, highlightthickness=0, bg='#DAEE01')#'#DAEE01')
+        self.canvas = tk.Canvas(root, width=self.window_width, height=self.window_height, bd=0, highlightthickness=0, bg='#DAEE01')#'#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218,238,1) 
         wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
@@ -438,7 +443,7 @@ class ImageGalleryApp:
                 self.multiplayer_rules.destroy()
                 for d in self.drafted_games:
                     d.delete()
-        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        self.canvas = tk.Canvas(self.root, width=self.window_width, height=self.window_height, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218, 238, 1)
         wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
@@ -478,7 +483,7 @@ class ImageGalleryApp:
             d.delete()
         self.title_label.destroy()
         self.canvas.destroy()
-        self.canvas = tk.Canvas(self.root, width=1920, height=1080, highlightthickness=0, bg='#DAEE01')
+        self.canvas = tk.Canvas(self.root, width=self.window_width, height=self.window_height, highlightthickness=0, bg='#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218, 238, 1)
         wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
@@ -513,7 +518,7 @@ class ImageGalleryApp:
             adjective = self.random_adjective()
             noun = self.random_noun()
             text_r = "The "+str(adjective)+ " Pyramid of "+str(noun)
-            self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",50), wraplength=1920, fg="white", bg="black")
+            self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",50), wraplength=self.window_width, fg="white", bg="black")
             self.title_label.pack(side="top", expand=False, fill="x")
             #self.title_label.lower()
             self.close_button.lift()
@@ -590,7 +595,7 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_multi += f"{game.rolled_game} : {file_path[game.rolled_game]['multiplayer']}\n\n"
 
-            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
+            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=10, relief="solid")
             self.multiplayer_rules.place(x=400, y=440)
         
     def coop_rules_button(self):
@@ -603,7 +608,7 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_coop += f"{game.rolled_game} : {file_path[game.rolled_game]['coop']}\n\n"
 
-            self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=1080, bg="white", borderwidth=10, relief="solid")
+            self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=10, relief="solid")
             self.coop_rules.place(x=400, y=440)
 
     def close_program(self, event):
