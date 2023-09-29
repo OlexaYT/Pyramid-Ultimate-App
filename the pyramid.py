@@ -98,6 +98,7 @@ class GameDraft:
             position = self.ui_position_calc(c, self.x_position, self.y_position, 'c', target.scale, curse_space)
             target.button_widget.place(x=position[0],y=position[1])
 
+    #TODO: Update comment
     def ui_position_calc(self, index, x_position, y_position, prefix, scale, curse_space):
         out_x_position = x_position 
         out_y_position = y_position
@@ -159,6 +160,8 @@ class CardImageButton:
             print(str("Error loading images at: + " + str(self.prefix) + " " + str(self.rolled_game)))
         output = os.path.join(image_folder, random.choice(images))
 
+        # [Petra]: Debugging; print loaded image filepath
+        #print(str(output))
         return output
     
     def delete(self):
@@ -212,7 +215,6 @@ class ImageGalleryApp:
         for filename in images:
             image_path = os.path.join(image_folder, filename)
             image = Image.open(image_path)
-            image = image.resize([self.window_width, self.window_height])
             image = ImageTk.PhotoImage(image)
             self.bg.append(image)  # Store both image and filename
         if len(images) < 1:
@@ -260,7 +262,7 @@ class ImageGalleryApp:
         self.bg_label = tk.Label(self.root, image=self.background_photo)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.canvas = tk.Canvas(root, width=1920, height=1080, bd=0, highlightthickness=0, bg='#DAEE01')#'#DAEE01')
+        self.canvas = tk.Canvas(root, width=self.window_width, height=self.window_height, bd=0, highlightthickness=0, bg='#DAEE01')#'#DAEE01')
         hwnd = self.canvas.winfo_id()
         colorkey = win32api.RGB(218,238,1) 
         wnd_exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
