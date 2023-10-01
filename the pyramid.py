@@ -211,6 +211,8 @@ class ImageGalleryApp:
 
         self.window_width = GetSystemMetrics(0)
         self.window_height = GetSystemMetrics(1)
+        
+        self.popup_border_width = 10
 
         self.load_bgs()
         self.background_photo = self.bg[0]
@@ -311,7 +313,7 @@ class ImageGalleryApp:
 
         close_font = font.Font(family="Kreon", size=16, weight="bold")  # Adjust font properties as needed
         self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
-        self.close_button.place(x=1880, y=10)  # Adjust the coordinates as needed
+        self.close_button.place(x=self.window_width - 40, y=10)  # Adjust the coordinates as needed
         self.close_button.bind("<Button-1>", self.close_program)
     
     def destroy_top_layer(self):
@@ -597,7 +599,7 @@ class ImageGalleryApp:
                 self.drafted_games.append(GameDraft(self.canvas,rolled_game_in,x_position,y_position,game_draft_scale))
 
                 x_position += x_add
-                if(x_position > 1900 and y_position < 470): #This code is hardcoded, but it should only ever affect 5 draft anyways.
+                if(x_position > 1900 and y_position < 470): # TODO: Update to base on screen size
                     x_position = 100 + (1.5 * CardImageButton.button_width) + 33
                     y_position += y_add
 
@@ -605,6 +607,11 @@ class ImageGalleryApp:
             print("Please select the number of games before starting.")    
 
     def multiplayer_rules_button(self):
+
+        # Don't keep both rules open
+        if len(self.t_coop) != 1:
+            self.coop_rules.place_forget()
+            self.t_coop = "1"
         
         if len(self.t_multi) != 1:
             self.multiplayer_rules.place_forget()
@@ -616,10 +623,18 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_multi += f"{game.rolled_game} : {file_path[game.rolled_game]['multiplayer']}\n\n"
 
-            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=10, relief="solid")
-            self.multiplayer_rules.place(x=400, y=440)
+            self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=self.popup_border_width, relief="solid")
+            rules_outer_width = self.window_height + self.popup_border_width * 2
+            rules_x = (self.window_width - rules_outer_width) / 2
+            self.multiplayer_rules.place(x=rules_x, y=440)
         
     def coop_rules_button(self):
+
+        # Don't keep both rules open
+        if len(self.t_multi) != 1:
+            self.multiplayer_rules.place_forget()
+            self.t_multi = "1"
+
         if len(self.t_coop) != 1:
             self.coop_rules.place_forget()
             self.t_coop = "1"
@@ -629,8 +644,10 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_coop += f"{game.rolled_game} : {file_path[game.rolled_game]['coop']}\n\n"
 
-            self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=10, relief="solid")
-            self.coop_rules.place(x=400, y=440)
+            self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=self.popup_border_width, relief="solid")
+            rules_outer_width = self.window_height + self.popup_border_width * 2
+            rules_x = (self.window_width - rules_outer_width) / 2
+            self.coop_rules.place(x=rules_x, y=440)
 
     def close_program(self, event):
         self.root.destroy()
