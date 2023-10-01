@@ -599,7 +599,7 @@ class ImageGalleryApp:
                 self.drafted_games.append(GameDraft(self.canvas,rolled_game_in,x_position,y_position,game_draft_scale))
 
                 x_position += x_add
-                if(x_position > 1900 and y_position < 470): # TODO: Update to base on screen size
+                if(x_position > self.window_width - 20 and y_position < 470): # TODO: Update y_pos to base on screen size
                     x_position = 100 + (1.5 * CardImageButton.button_width) + 33
                     y_position += y_add
 
@@ -623,6 +623,7 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_multi += f"{game.rolled_game} : {file_path[game.rolled_game]['multiplayer']}\n\n"
 
+            # TODO: Change wraplength for vertical screens
             self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=self.popup_border_width, relief="solid")
             rules_outer_width = self.window_height + self.popup_border_width * 2
             rules_x = (self.window_width - rules_outer_width) / 2
@@ -644,6 +645,7 @@ class ImageGalleryApp:
             for game in self.drafted_games:
                 self.t_coop += f"{game.rolled_game} : {file_path[game.rolled_game]['coop']}\n\n"
 
+            # TODO: Change wraplength for vertical screens
             self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=self.popup_border_width, relief="solid")
             rules_outer_width = self.window_height + self.popup_border_width * 2
             rules_x = (self.window_width - rules_outer_width) / 2
