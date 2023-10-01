@@ -10,6 +10,8 @@ import random
 import csv
 import json
 import pyglet
+import ctypes
+ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
 class GameDraft:
     def __init__(self, canvas, rolled_game, x_position, y_position, scale=[1.0,1.0]) -> None:
@@ -20,6 +22,11 @@ class GameDraft:
         self.secondaries=[]
         self.x_position = x_position
         self.y_position = y_position
+        self.window_width = GetSystemMetrics(0)
+        self.window_height = GetSystemMetrics(1)
+        self.button_width = (189 *self.window_width)/1920
+        self.button_height = (270 * self.window_height)/1080
+        self.button_x_spacing = (10*self.window_width)/1920
         self.scale = scale
         self.GenerateCardImageButtons(rolled_game)
     
@@ -104,14 +111,14 @@ class GameDraft:
         out_y_position = y_position
         match prefix:
             case 'p':
-                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) #For each primary, set the x_pos to inital pos + (.75 * card_width * x_scale * index)
-                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index) #For each primary, set the y_pos to inital pos + (.25 * card_height * scale * index)
+                out_x_position = x_position + int(0.5 * self.button_width * scale[0] * index) #For each primary, set the x_pos to inital pos + (.75 * card_width * x_scale * index)
+                out_y_position = y_position + int(0.25 * self.button_height * scale[1] * index) #For each primary, set the y_pos to inital pos + (.25 * card_height * scale * index)
             case 's':
-                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0]) #Same as primary, but x_pos += (card width * scale) (or 2 times card width if curse)
-                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index)
+                out_x_position = x_position + int(0.5 * self.button_width * scale[0] * index) + int(self.button_width * scale[0]) #Same as primary, but x_pos += (card width * scale) (or 2 times card width if curse)
+                out_y_position = y_position + int(0.25 * self.button_height * scale[1] * index)
             case 'c':
-                out_x_position = x_position + int(0.5 * CardImageButton.button_width * scale[0] * index) + int(CardImageButton.button_width * scale[0] * 0.5) #Same as primary, but x_pos += (card width * scale)
-                out_y_position = y_position + int(0.25 * CardImageButton.button_height * scale[1] * index + (CardImageButton.button_height * 0.5 * scale[1]))
+                out_x_position = x_position + int(0.5 * self.button_width * scale[0] * index) + int(self.button_width * scale[0] * 0.5) #Same as primary, but x_pos += (card width * scale)
+                out_y_position = y_position + int(0.25 * self.button_height * scale[1] * index + (self.button_height * 0.5 * scale[1]))
             case _:
                 print("Error: Unhandled prefix passed to GameDraft.ui_position_calc()")
         return [out_x_position,out_y_position]
@@ -125,12 +132,16 @@ class GameDraft:
             c.delete()
 
 class CardImageButton:
-    button_width = 189
-    button_height = 270
-    button_x_spacing = 10
+
+    button_height = int((270 * GetSystemMetrics(1))/1080)
+    button_width = int((189 *GetSystemMetrics(0))/1920)
+    button_x_spacing = int((10*GetSystemMetrics(0))/1920)
     def __init__(self, canvas, x, y, prefix, rolled_game, scale=[1.0,1.0]):
+
         self.canvas=canvas
         self.scale=scale
+        self.window_width = GetSystemMetrics(0)
+        self.window_height = GetSystemMetrics(1)
         self.image = []
         self.rolled_game = rolled_game
         self.button_widget = tk.Button(canvas, image=None,width=int(CardImageButton.button_width*self.scale[0]), height=int(CardImageButton.button_height*self.scale[1]), highlightthickness=0)
@@ -179,7 +190,6 @@ class ImageGalleryApp:
         self.t_coop = "1"
         self.adjectives = []
         self.nouns = []
-
         self.drafted_games = []
 
         self.rules=[]
@@ -215,6 +225,7 @@ class ImageGalleryApp:
         for filename in images:
             image_path = os.path.join(image_folder, filename)
             image = Image.open(image_path)
+            image = image.resize((self.window_width, self.window_height))
             image = ImageTk.PhotoImage(image)
             self.bg.append(image)  # Store both image and filename
         if len(images) < 1:
@@ -273,21 +284,21 @@ class ImageGalleryApp:
         self.canvas.place(x=0, y=0)
 
         self.next_button = ttk.Button(self.root, image=self.next_image, command=self.next_page, style="Small.TButton")
-        self.next_button.place(x=1500, y=950)
+        self.next_button.place(x=(1500*self.window_width)/1920, y=(950*self.window_height)/1080)
 
         self.prev_button = ttk.Button(self.root, image=self.previous_image, command=self.prev_page, style="Small.TButton")
-        self.prev_button.place(x=220, y=950)
+        self.prev_button.place(x=(220*self.window_width)/1920, y=(950*self.window_height)/1080)
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
         
         self.cycle_bg_button = ttk.Button(self.root, image=self.cyclebg_image, command=self.cycle_bg, style="Small.TButton")
-        self.cycle_bg_button.place(x=600, y=1020, anchor=tk.CENTER)
+        self.cycle_bg_button.place(x=(600*self.window_width)/1920, y=(1020*self.window_height)/1080, anchor=tk.CENTER)
 
         self.rules_button = ttk.Button(self.root, image=self.rules_image, command=self.show_rules, style="Small.TButton")
-        self.rules_button.place(x=1300, y=1020, anchor=tk.CENTER)
+        self.rules_button.place(x=(1300*self.window_width)/1920, y=(1020*self.window_height)/1080, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
-        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
+        self.clicked_frame.place(x=(950*self.window_width)/1920, y=(940*self.window_height)/1080, anchor=tk.CENTER)
 
         self.top_layer_buttons(0)
         
@@ -296,7 +307,7 @@ class ImageGalleryApp:
     def top_layer_buttons(self, page = 0):
         if(page > 0):
             self.back_button = tk.Button(self.root, image=self.backbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda p=page: self.return_button(p))
-            self.back_button.place(x=30, y=10)  # Adjust the coordinates as needed
+            self.back_button.place(x=(30*self.window_width)/1920, y=(10*self.window_height)/1080)  # Adjust the coordinates as needed
 
         close_font = font.Font(family="Kreon", size=16, weight="bold")  # Adjust font properties as needed
         self.close_button = tk.Label(self.root, text="X", font=close_font, bg="red", fg="white", cursor="hand2")
@@ -320,7 +331,7 @@ class ImageGalleryApp:
             btn = tk.Button(self.canvas, image = photo, width=CardImageButton.button_width, height=CardImageButton.button_height)
             #btn.config(image=photo)
             btn.image = photo
-            btn.grid(row=(i - start_idx) // 8, column=(i - start_idx) % 8, padx=22, pady=10)
+            btn.grid(row=(i - start_idx) // 8, column=(i - start_idx) % 8, padx=(22*self.window_width)/1920, pady=(10*self.window_width)/1080)
             btn.bind("<Button-1>", lambda event, f = filename: self.add_to_clicked_images(f)) #.bind inputs self, so we use lambda event to throw away that extra parameter
             btn.bind("<Button-2>", lambda event, f = filename: self.remove_from_clicked_images(f))
             btn.bind("<Button-3>", lambda event, f = filename: self.remove_from_clicked_images(f))
@@ -352,7 +363,7 @@ class ImageGalleryApp:
         clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
         clicked_label.image = clicked_photo
         clicked_label.pack(side=tk.LEFT)
-        self.done_button.place(x=950, y=1026, anchor=tk.CENTER)
+        self.done_button.place(x=(950*self.window_width)/1920, y=(1026*self.window_height)/1080, anchor=tk.CENTER)
     
     def remove_from_clicked_images(self, filename):
         if filename in self.clicked_images:
@@ -397,32 +408,32 @@ class ImageGalleryApp:
         self.howmany_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/howmany.png"))
 
         # Create a label asking how many games to play
-        self.canvas.create_image(962, 200, image=self.howmany_image)
+        self.canvas.create_image((962*self.window_width)/1920, (200*self.window_height)/1080, image=self.howmany_image)
 
         # Create buttons for 1, 3, and 5 games
         self.games_selection = tk.StringVar()  # Variable to store the selected number of games
 
-        self.games_1_button = tk.Button(self.root, image=self.one_image, font=("Kreon", 24), command=lambda: self.start_games(1))
-        self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
+        self.games_1_button = tk.Button(self.root, image=self.one_image, font=("Kreon", int((24*self.window_width)/1920)), command=lambda: self.start_games(1))
+        self.games_1_button.place(x=(500*self.window_width)/1920, y=(600*self.window_height)/1080, anchor=tk.CENTER)
 
-        self.games_3_button = tk.Button(self.root, image=self.three_image, font=("Kreon", 24), command=lambda: self.start_games(3))
-        self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
+        self.games_3_button = tk.Button(self.root, image=self.three_image, font=("Kreon", int((24*self.window_width)/1920)), command=lambda: self.start_games(3))
+        self.games_3_button.place(x=(960*self.window_width)/1920, y=(600*self.window_height)/1080, anchor=tk.CENTER)
 
-        self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Kreon", 24), command=lambda: self.start_games(5))
-        self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
+        self.games_5_button = tk.Button(self.root, image=self.five_image, font=("Kreon", int((24*self.window_width)/1920)), command=lambda: self.start_games(5))
+        self.games_5_button.place(x=(1420*self.window_width)/1920, y=(600*self.window_height)/1080, anchor=tk.CENTER)
 
     def show_rules(self):
         self.clear_screen(0)
         self.top_layer_buttons(1)
 
         self.games_1_button = tk.Button(self.root, image=self.rules[0])
-        self.games_1_button.place(x=500, y=600, anchor=tk.CENTER)
+        self.games_1_button.place(x=(500*self.window_width)/1920, y=(600*self.window_height)/1080, anchor=tk.CENTER)
 
-        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Kreon", 24))
-        self.games_3_button.place(x=960, y=600, anchor=tk.CENTER)
+        self.games_3_button = tk.Button(self.root, image=self.rules[1], font=("Kreon", int((24*self.window_width)/1920)))
+        self.games_3_button.place(x=(960*self.window_width)/1920, y=(600*self.window_height)/1080, anchor=tk.CENTER)
 
-        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Kreon", 24))
-        self.games_5_button.place(x=1420, y=600, anchor=tk.CENTER)
+        self.games_5_button = tk.Button(self.root, image=self.rules[2], font=("Kreon", int((24*self.window_width)/1920)))
+        self.games_5_button.place(x=(1420*self.window_width)/1920, y=(600*self.window_height)/1080, anchor=tk.CENTER)
     
     def return_button(self, cur_screen):
         self.clear_screen(cur_screen)
@@ -464,7 +475,7 @@ class ImageGalleryApp:
         self.canvas.place(x=0, y=0)
 
         self.clicked_frame = tk.Frame(self.root)
-        self.clicked_frame.place(x=950, y=940, anchor=tk.CENTER)
+        self.clicked_frame.place(x=(950*self.window_width)/1920, y=(940*self.window_height)/1080, anchor=tk.CENTER)
     
     def read_csv(self):
         csv_file_path = 'word_bank.csv'
@@ -509,7 +520,7 @@ class ImageGalleryApp:
         self.roll_number = self.roll_number+1
         self.canvas.delete("rolltext")
         output = str(self.roll_result)
-        self.canvas.create_text((300,1030),text=output,font=("Kreon",40),fill="white",tags="rolltext")
+        self.canvas.create_text(((300*self.window_width)/1920,(1030*self.window_height)/1080),text=output,font=("Kreon",40),fill="white",tags="rolltext")
 
     #Runs Drafted Objective Page
     def start_games(self, num_games, init=True):
@@ -529,55 +540,55 @@ class ImageGalleryApp:
             adjective = self.random_adjective()
             noun = self.random_noun()
             text_r = "The "+str(adjective)+ " Pyramid of "+str(noun)
-            self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",50), wraplength=self.window_width, fg="white", bg="black")
+            self.title_label = tk.Label(self.root, text=text_r, font=("Kreon",int((50*self.window_width)/1920)), wraplength=self.window_width, fg="white", bg="black")
             self.title_label.pack(side="top", expand=False, fill="x")
             self.close_button.lift()
             self.back_button.lift()
             
             self.reroll_button = tk.Button(self.root, image=self.rerollbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=lambda: self.reroll_all(num_games))
-            self.reroll_button.place(x=800, y=1000)  # Adjust the coordinates as needed
+            self.reroll_button.place(x=(800*self.window_width)/1920, y=(1000*self.window_height)/1080)  # Adjust the coordinates as needed
 
             self.dice_button = tk.Button(self.root, image=self.rolldiebutton_image, font="Kreon", bg="black", fg="white", cursor="hand2")
             self.dice_button.config(command=lambda:self.die_roll())
-            self.dice_button.place(x=30, y=1000)  # Adjust the coordinates as needed
+            self.dice_button.place(x=(30*self.window_width)/1920, y=(1000*self.window_height)/1080)  # Adjust the coordinates as needed
             self.roll_number = 0
             self.roll_result = -1
             output = ""
-            self.canvas.create_text((300,1000),text=output,font=("Kreon",12),tags="rolltext")
+            self.canvas.create_text(((300*self.window_width)/1920,(1000*self.window_height)/1080),text=output,font=("Kreon",12),tags="rolltext")
 
             self.multiplayer_button = tk.Button(self.root, image=self.multiplayerbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.multiplayer_rules_button)
-            self.multiplayer_button.place(x=1620, y=920)  # Adjust the coordinates as needed
+            self.multiplayer_button.place(x=(1620*self.window_width)/1920, y=(920*self.window_height)/1080)  # Adjust the coordinates as needed
 
             self.coop_button = tk.Button(self.root, image=self.coopbutton_image, font="Kreon", bg="black", fg="white", cursor="hand2", command=self.coop_rules_button)
-            self.coop_button.place(x=1620, y=1000)  # Adjust the coordinates as needed         
+            self.coop_button.place(x=(1620*self.window_width)/1920, y=(1000*self.window_height)/1080)  # Adjust the coordinates as needed         
 
             self.multiplayer_rules = tk.Label(self.root, font=("Kreon-Bold",24), wraplength=960, bg="white")
             self.coop_rules = tk.Label(self.root, font=("Kreon-Bold",24), wraplength=960, bg="white")
 
 
             #IMPORTANT: These variables store the inital position and spacing between GameDrafts.
-            x_position = 100
-            y_position = 200
+            x_position = (100*self.window_width)/1920
+            y_position = (200*self.window_height)/1080
             game_draft_scale = [1.0, 1.0] #This SCALE is passed into the GameDraft.new() and affects ALL the cards in a drafted game.
-            x_add = 650
-            y_add = 370
+            x_add = (650*self.window_width)/1920
+            y_add = (370*self.window_height)/1080
 
             #IMPORTANT: Edit this function's hardcoded values to adjust UI for different numbers of games chosen.
             match num_games:
                 case 1:
-                    x_position = 550
-                    y_position = 250
+                    x_position = (550*self.window_width)/1920
+                    y_position = (250*self.window_height)/1080
                     game_draft_scale = [2.0,2.0]
                 case 3:
-                    x_position = 233
-                    y_position = 450
-                    x_add = 515
+                    x_position = (233*self.window_width)/1920
+                    y_position = (450*self.window_height)/1080
+                    x_add = (515*self.window_width)/1920
                     game_draft_scale = [1.0,1.0]
                 case 5:
-                    x_position = 100
-                    y_position = 300
-                    x_add = 625
-                    y_add = 300
+                    x_position = (100*self.window_width)/1920
+                    y_position = (300*self.window_height)/1080
+                    x_add = (625*self.window_width)/1920
+                    y_add = (300*self.window_height)/1080
                 case _:
                     print("Error: Start games received an unexpected number of games")
 
@@ -628,13 +639,15 @@ if __name__ == "__main__":
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "\\Resources"
     image_folder_path = os.path.join(__location__, 'CARD BACKS APP')  # Replace with the actual folder path containing your images
     pyglet.font.add_file(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\Kreon-Bold.ttf')  # Your TTF file name here
-
+    
+    width = GetSystemMetrics(0)
+    height = GetSystemMetrics(1)
+    print(width, height)
     root = tk.Tk()
-    root.geometry('1920x1080')
-    root.resizable(width=False, height=False)
+    root.geometry(f'{width}x{height}')
+    root.resizable(width=True, height=True)
     root.wm_attributes("-transparentcolor", 'grey')
-    if GetSystemMetrics(0) == 1920 and GetSystemMetrics(1) == 1080:
-        root.attributes('-fullscreen', True)
+    root.attributes('-fullscreen', True)
     app = ImageGalleryApp(root, image_folder_path)
 
     root.mainloop()
