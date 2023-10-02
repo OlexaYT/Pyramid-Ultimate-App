@@ -12,6 +12,7 @@ import json
 import pyglet
 import ctypes
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
+from math import floor
 
 class GameDraft:
     def __init__(self, canvas, rolled_game, x_position, y_position, scale=[1.0,1.0]) -> None:
@@ -134,8 +135,10 @@ class GameDraft:
 class CardImageButton:
 
     button_height = int((270 * GetSystemMetrics(1))/1080)
-    button_width = int((189 *GetSystemMetrics(0))/1920)
+    button_width = floor(button_height / 270 * 189)
     button_x_spacing = int((10*GetSystemMetrics(0))/1920)
+
+    
     def __init__(self, canvas, x, y, prefix, rolled_game, scale=[1.0,1.0]):
 
         self.canvas=canvas
@@ -185,6 +188,7 @@ class ImageGalleryApp:
         self.images = []
         self.current_page = 0
         self.images_per_page = 24
+        self.page_columns = 8
         self.clicked_images = {}
         self.t_multi = "1"
         self.t_coop = "1"
@@ -196,21 +200,28 @@ class ImageGalleryApp:
         self.bg = []
         self.bg_index = 0
 
-        #Set up images for canvas buttons
-        zoom = .80  # multiplier for image size by zooming -/+
-        self.rerollbutton_image = Image.open("Resources/Buttons/reroll_games.png")
-        self.rerollbutton_image = ImageTk.PhotoImage(self.rerollbutton_image.resize(tuple([int(zoom * x) for x in self.rerollbutton_image.size])))
-        self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
-        self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(zoom * x) for x in self.backbutton_image.size])))
-        self.rolldiebutton_image = Image.open("Resources/Buttons/roll_d6.png")
-        self.rolldiebutton_image = ImageTk.PhotoImage(self.rolldiebutton_image.resize(tuple([int(zoom * x) for x in self.rolldiebutton_image.size])))
-        self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
-        self.multiplayerbutton_image = ImageTk.PhotoImage(self.multiplayerbutton_image.resize(tuple([int(zoom * x) for x in self.multiplayerbutton_image.size])))
-        self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
-        self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(zoom * x) for x in self.coopbutton_image.size])))
+        self.zoom = 1  # multiplier for image size by zooming -/+
 
         self.window_width = GetSystemMetrics(0)
         self.window_height = GetSystemMetrics(1)
+
+        if self.window_width <= CardImageButton.button_width * self.page_columns + (22 * (self.page_columns - 1)):
+            self.page_columns = floor(self.window_width / (CardImageButton.button_width + 22))
+            self.images_per_page = self.page_columns * 3
+            self.zoom = self.window_width / 1920
+
+        #Set up images for canvas buttons
+        self.rerollbutton_image = Image.open("Resources/Buttons/reroll_games.png")
+        self.rerollbutton_image = ImageTk.PhotoImage(self.rerollbutton_image.resize(tuple([int(.8 * self.zoom * x) for x in self.rerollbutton_image.size])))
+        self.backbutton_image = Image.open("Resources/Buttons/back_button.png")
+        self.backbutton_image = ImageTk.PhotoImage(self.backbutton_image.resize(tuple([int(.8 * self.zoom * x) for x in self.backbutton_image.size])))
+        self.rolldiebutton_image = Image.open("Resources/Buttons/roll_d6.png")
+        self.rolldiebutton_image = ImageTk.PhotoImage(self.rolldiebutton_image.resize(tuple([int(.8 * self.zoom * x) for x in self.rolldiebutton_image.size])))
+        self.multiplayerbutton_image = Image.open("Resources/Buttons/multiplayer_rules.png")
+        self.multiplayerbutton_image = ImageTk.PhotoImage(self.multiplayerbutton_image.resize(tuple([int(.8 * self.zoom * x) for x in self.multiplayerbutton_image.size])))
+        self.coopbutton_image = Image.open("Resources/Buttons/coop_rules.png")
+        self.coopbutton_image = ImageTk.PhotoImage(self.coopbutton_image.resize(tuple([int(.8 * self.zoom * x) for x in self.coopbutton_image.size])))
+
         
         self.popup_border_width = 10
 
@@ -265,11 +276,16 @@ class ImageGalleryApp:
             print(str("Error loading rule images or no images in rules folder"))
 
     def create_widgets(self):
-        self.next_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/next.png"))
-        self.previous_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/previous.png"))
-        self.donedrafting_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/done_drafting.png"))
-        self.cyclebg_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/cycle_bg.png"))
-        self.rules_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/rules.png"))
+        self.next_image = Image.open("Resources/Buttons/next.png")
+        self.next_image = ImageTk.PhotoImage(self.next_image.resize(tuple([int(self.zoom * x) for x in self.next_image.size])))
+        self.previous_image = Image.open("Resources/Buttons/previous.png")
+        self.previous_image = ImageTk.PhotoImage(self.previous_image.resize(tuple([int(self.zoom * x) for x in self.previous_image.size])))
+        self.donedrafting_image = Image.open("Resources/Buttons/done_drafting.png")
+        self.donedrafting_image = ImageTk.PhotoImage(self.donedrafting_image.resize(tuple([int(self.zoom * x) for x in self.donedrafting_image.size])))
+        self.cyclebg_image = Image.open("Resources/Buttons/cycle_bg.png")
+        self.cyclebg_image = ImageTk.PhotoImage(self.cyclebg_image.resize(tuple([int(self.zoom * x) for x in self.cyclebg_image.size])))
+        self.rules_image = Image.open("Resources/Buttons/rules.png")
+        self.rules_image = ImageTk.PhotoImage(self.rules_image.resize(tuple([int(self.zoom * x) for x in self.rules_image.size])))
 
         # Create a Label to display the background image
         self.bg_label = tk.Label(self.root, image=self.background_photo)
@@ -286,21 +302,21 @@ class ImageGalleryApp:
         self.canvas.place(x=0, y=0)
 
         self.next_button = ttk.Button(self.root, image=self.next_image, command=self.next_page, style="Small.TButton")
-        self.next_button.place(x=(1500*self.window_width)/1920, y=(950*self.window_height)/1080)
+        self.next_button.place(x=(1500*self.window_width)/1920, y=self.window_height - 130 * self.zoom)
 
         self.prev_button = ttk.Button(self.root, image=self.previous_image, command=self.prev_page, style="Small.TButton")
-        self.prev_button.place(x=(220*self.window_width)/1920, y=(950*self.window_height)/1080)
+        self.prev_button.place(x=(220*self.window_width)/1920, y=self.window_height - 130 * self.zoom)
 
         self.done_button = ttk.Button(self.root, image=self.donedrafting_image, command=self.choose_number_of_drafts, style="Small.TButton")
         
         self.cycle_bg_button = ttk.Button(self.root, image=self.cyclebg_image, command=self.cycle_bg, style="Small.TButton")
-        self.cycle_bg_button.place(x=(600*self.window_width)/1920, y=(1020*self.window_height)/1080, anchor=tk.CENTER)
+        self.cycle_bg_button.place(x=(600*self.window_width)/1920, y=self.window_height - 60 * self.zoom, anchor=tk.CENTER)
 
         self.rules_button = ttk.Button(self.root, image=self.rules_image, command=self.show_rules, style="Small.TButton")
-        self.rules_button.place(x=(1300*self.window_width)/1920, y=(1020*self.window_height)/1080, anchor=tk.CENTER)
+        self.rules_button.place(x=(1300*self.window_width)/1920, y=self.window_height - 60 * self.zoom, anchor=tk.CENTER)
 
         self.clicked_frame = tk.Frame(self.root)
-        self.clicked_frame.place(x=(950*self.window_width)/1920, y=(940*self.window_height)/1080, anchor=tk.CENTER)
+        self.clicked_frame.place(x=(950*self.window_width)/1920, y=self.window_height - 140 * self.zoom, anchor=tk.CENTER)
 
         self.top_layer_buttons(0)
         
@@ -333,7 +349,7 @@ class ImageGalleryApp:
             btn = tk.Button(self.canvas, image = photo, width=CardImageButton.button_width, height=CardImageButton.button_height)
             #btn.config(image=photo)
             btn.image = photo
-            btn.grid(row=(i - start_idx) // 8, column=(i - start_idx) % 8, padx=(22*self.window_width)/1920, pady=(10*self.window_width)/1080)
+            btn.grid(row=(i - start_idx) // self.page_columns, column=(i - start_idx) % self.page_columns, padx=(22*self.window_width)/1920, pady=(10*self.window_width)/1080)
             btn.bind("<Button-1>", lambda event, f = filename: self.add_to_clicked_images(f)) #.bind inputs self, so we use lambda event to throw away that extra parameter
             btn.bind("<Button-2>", lambda event, f = filename: self.remove_from_clicked_images(f))
             btn.bind("<Button-3>", lambda event, f = filename: self.remove_from_clicked_images(f))
@@ -365,7 +381,7 @@ class ImageGalleryApp:
         clicked_label = tk.Label(self.clicked_frame, image=clicked_photo)
         clicked_label.image = clicked_photo
         clicked_label.pack(side=tk.LEFT)
-        self.done_button.place(x=(950*self.window_width)/1920, y=(1026*self.window_height)/1080, anchor=tk.CENTER)
+        self.done_button.place(x=(950*self.window_width)/1920, y=self.window_height - 54 * self.zoom, anchor=tk.CENTER)
     
     def remove_from_clicked_images(self, filename):
         if filename in self.clicked_images:
@@ -404,10 +420,14 @@ class ImageGalleryApp:
         self.clear_screen(0)
         self.top_layer_buttons(1)
 
-        self.one_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/one.png"))
-        self.three_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/three.png"))
-        self.five_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/five.png"))
-        self.howmany_image = ImageTk.PhotoImage(Image.open("Resources/Buttons/howmany.png"))
+        self.one_image = Image.open("Resources/Buttons/one.png")
+        self.one_image = ImageTk.PhotoImage(self.one_image.resize(tuple([int(self.zoom * x) for x in self.one_image.size])))
+        self.three_image = Image.open("Resources/Buttons/three.png")
+        self.three_image = ImageTk.PhotoImage(self.three_image.resize(tuple([int(self.zoom * x) for x in self.three_image.size])))
+        self.five_image = Image.open("Resources/Buttons/five.png")
+        self.five_image = ImageTk.PhotoImage(self.five_image.resize(tuple([int(self.zoom * x) for x in self.five_image.size])))
+        self.howmany_image = Image.open("Resources/Buttons/howmany.png")
+        self.howmany_image = ImageTk.PhotoImage(self.howmany_image.resize(tuple([int(self.zoom * x) for x in self.howmany_image.size])))
 
         # Create a label asking how many games to play
         self.canvas.create_image((962*self.window_width)/1920, (200*self.window_height)/1080, image=self.howmany_image)
@@ -627,7 +647,7 @@ class ImageGalleryApp:
             self.multiplayer_rules.config(text=self.t_multi, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=self.popup_border_width, relief="solid")
             rules_outer_width = self.window_height + self.popup_border_width * 2
             rules_x = (self.window_width - rules_outer_width) / 2
-            self.multiplayer_rules.place(x=rules_x, y=440)
+            self.multiplayer_rules.place(x=rules_x, rely=0.25)
         
     def coop_rules_button(self):
 
@@ -649,7 +669,8 @@ class ImageGalleryApp:
             self.coop_rules.config(text=self.t_coop, font=("Kreon",14), wraplength=self.window_height, bg="white", borderwidth=self.popup_border_width, relief="solid")
             rules_outer_width = self.window_height + self.popup_border_width * 2
             rules_x = (self.window_width - rules_outer_width) / 2
-            self.coop_rules.place(x=rules_x, y=440)
+            self.coop_rules.place(x=rules_x, rely=0.25)
+            self.coop_rules.winfo_height
 
     def close_program(self, event):
         self.root.destroy()
